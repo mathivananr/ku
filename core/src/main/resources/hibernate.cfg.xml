@@ -1,0 +1,21 @@
+<!-- The following doctype doesn't work when offline, so default to old one, 
+	which does work. <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate 
+	Configuration DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd"> -->
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<property name="show_sql">false</property>
+    	<property name="format_sql">false</property>
+		<mapping class="com.ku.model.User" />
+		<mapping class="com.ku.model.Role" />
+		<mapping class="com.ku.model.SupportRequest" />
+		<mapping class="com.ku.model.MerchantType" />
+		<mapping class="com.ku.model.Merchant" />
+		<mapping class="com.ku.model.Offer" />
+		<mapping class="com.ku.model.OfferLabel" />
+		<mapping class="com.ku.model.AppConfig" />
+		<mapping class="com.ku.model.AppLog" />
+	</session-factory>
+</hibernate-configuration>

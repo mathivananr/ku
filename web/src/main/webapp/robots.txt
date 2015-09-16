@@ -1,0 +1,4 @@
+# robots.txt for http://www.muniyamma.com.com/
+
+User-agent: *
+Disallow: /test/ # This is test URL
