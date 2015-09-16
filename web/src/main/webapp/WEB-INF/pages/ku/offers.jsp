@@ -10,7 +10,7 @@
 		<c:forEach var="offer" items="${offers}">
 			<div class="well">
 				<div class="row row-nomargin">
-					<div id="offer-left" class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
+					<div id="offer-left" class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
 						<div id="offer-image" class="offer-image">
 							<c:choose>
 							  <c:when test="${not empty offer.imagePath}">
@@ -20,12 +20,12 @@
 							    <div class="text-center"><a href="${offer.targetURL}" ><img class="col-lg-12 col-md-12 col-sm-10 col-xs-10" alt="${offer.merchantName}" src="${offer.merchantLogoPath}"></a></div>
 							  </c:when>
 							  <c:otherwise>
-							    <div class="text-center"><p class="col-lg-10 col-md-10 col-sm-10 col-xs-10 offer-image-merchant-name">${offer.merchantName}</p></div>
+							    <div class="text-center"><p class="col-lg-10 col-md-10 col-sm-12 col-xs-12 offer-image-merchant-name">${offer.merchantName}</p></div>
 							  </c:otherwise>
 						  </c:choose>
 						 </div>
 					</div>
-					<div id="offer-center" class="col-lg-7 col-md-7 col-sm-6 col-xs-12">
+					<div id="offer-center" class="col-lg-7 col-md-7 col-sm-5 col-xs-12">
 						<div id="offer-title" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 margin-bottom10"><h4><strong>${offer.offerTitle}</strong></h4></div>
 						<div id="offer-body" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 							<p>${offer.description}</p>

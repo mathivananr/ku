@@ -1,5 +1,7 @@
 package com.ku.webapp.controller;
 
+import java.util.ArrayList;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,10 +29,12 @@ public class HomeController extends BaseFormController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showHome(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
-		System.out.println("home ::::::::::::::::::::::");
 		Model model = new ExtendedModelMap();
 		model.addAttribute("activeMenu", "offer-link");
-		model.addAttribute("offers", offerManager.getAllOffers());
+		model.addAttribute("offers", offerManager.getOffersByLabels(new ArrayList<String>(), 0 , 25));
+		model.addAttribute("pageTitle", "");
+		model.addAttribute("metaKeywords", "");
+		model.addAttribute("metaDescription", "");
 		return new ModelAndView("/ku/offers", model.asMap());
 	}
 }

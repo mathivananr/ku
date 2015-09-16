@@ -219,4 +219,9 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 	public OfferLabel getOfferLabelByLabel(String label) throws KUException {
 		return offerDao.getOfferLabelByLabel(label);
 	}
+	
+	public List<Offer> getOffersByLabels(List<String> labels, int start, int end)
+			throws KUException {
+		return offerDao.getOffersByLabels(labels, start, end);
+	}
 }

@@ -37,4 +37,7 @@ public interface OfferManager extends GenericManager<Offer, Long> {
 	
 	List<OfferLabel> importOfferLabels(String filePath)
 			throws KUException;
+	
+	List<Offer> getOffersByLabels(List<String> labels, int start, int end)
+			throws KUException;
 }

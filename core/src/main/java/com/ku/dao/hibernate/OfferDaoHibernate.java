@@ -2,10 +2,13 @@ package com.ku.dao.hibernate;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -137,6 +140,47 @@ public class OfferDaoHibernate extends GenericDaoHibernate<Offer, Long>
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<Offer> getOffersByLabels(List<String> labels, int start, int end)
+			throws KUException {
+		Calendar now = new GregorianCalendar();
+		try {
+			String queryString = "select offer from Offer as offer";
+			String queryAlies = "";
+			String queryCondition = "";
+			String queryLimit = "";
+			for (int i = 1; i <= labels.size(); i++) {
+				queryAlies = queryAlies + " join offer.labels as offerLabel"
+						+ i;
+			}
+			int count = 1;
+			for (String label : labels) {
+				if (queryCondition.length() == 0 ) {
+					queryCondition = " where offerLabel" + count + ".label='"
+							+ label + "'";
+				} else {
+					queryCondition = queryCondition + " and offerLabel" + count
+							+ ".label='" + label + "'";
+				}
+				count++;
+			}
+			if (queryCondition.length() == 0 ) {
+				queryCondition = " offer.offerEnd > :now";
+			} else {
+				queryCondition = queryCondition + " and offer.offerEnd > :now";
+			}
+			queryLimit = " order by offer.offerId desc";
+			Query query = getSession().createQuery(
+					queryString + queryAlies + queryCondition + queryLimit);
+			query.setCalendar("now", now);
+			query.setFirstResult(start);
+			query.setMaxResults(end);
+			return (List<Offer>) query.list();
+		} catch (HibernateException e) {
+			throw new KUException(e.getMessage(), e);
+		}
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * 

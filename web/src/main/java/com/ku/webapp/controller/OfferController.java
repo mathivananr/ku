@@ -1,6 +1,8 @@
 package com.ku.webapp.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -140,10 +142,19 @@ public class OfferController extends BaseFormController {
 			@PathVariable("label") String label)
 			throws KUException {
 		log.info("getting offers for :: " + label);
-		label = label.replaceAll("-", " ");
+		List<String> labels = new ArrayList<String>();
+		if(label.contains("-")){
+			labels.addAll(Arrays.asList(label.split("-")));
+		} else {
+			labels.add(label);
+		}
+		//label = label.replaceAll("-", " ");
 		Model model = new ExtendedModelMap();
 		model.addAttribute("activeMenu", "offer-link");
-		model.addAttribute("offers", offerManager.getOffersByLabel(label));
+		model.addAttribute("offers", offerManager.getOffersByLabels(labels, 0 , 25));
+		model.addAttribute("pageTitle", label);
+		model.addAttribute("metaKeywords", label);
+		model.addAttribute("metaDescription", "latest "+ label +" are here");
 		return new ModelAndView("/ku/offers", model.asMap());
 	}
 }
