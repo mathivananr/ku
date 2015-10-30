@@ -11,15 +11,40 @@
 <meta charset="utf-8">
 <!-- Always force latest IE rendering engine or request Chrome Frame -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
 <!-- Page Title -->
-<title>${pageTitle}</title>
-<!-- Meta Description -->
-<meta name="description" content="${metaDescription}">
-<meta name="keywords" content="${metaKeywords}">
+<c:choose>
+	<c:when test="${not empty pageTitle}">
+		<title>${pageTitle}</title>	
+	</c:when>
+	<c:otherwise>
+		<title>${appTitle}</title>
+	</c:otherwise>
+</c:choose>
+
+<c:choose>
+	<c:when test="${not empty metaKeywords}">
+		<meta name="keywords" content="${metaKeywords}">
+	</c:when>
+	<c:otherwise>
+		<meta name="keywords" content="${appMetaKeyword}">
+	</c:otherwise>
+</c:choose>
+
+<c:choose>
+	<c:when test="${not empty metaDescription}">
+		<meta name="description" content="${metaDescription}">
+	</c:when>
+	<c:otherwise>
+		<meta name="description" content="${appMetaDescription}">
+	</c:otherwise>
+</c:choose>
+
+
 <meta property="og:title" content="${ogTitle}" />
-<meta property="og:site_name" content="${applicationName}" />
+<meta property="og:site_name" content="${appName}" />
 <meta property="og:url" content="${ogURL}" />
-<meta property="og:image" content="${applicationUrl}/${ogImage}" />
+<meta property="og:image" content="${appUrl}/${ogImage}" />
 <meta property="og:description" content="${ogDescription}" />
 <meta name="author" content="${auther}">
 <!-- Mobile Specific Meta -->

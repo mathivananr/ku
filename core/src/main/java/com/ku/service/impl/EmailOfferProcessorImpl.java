@@ -1,5 +1,7 @@
 package com.ku.service.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -22,17 +25,24 @@ import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
+import javax.servlet.ServletContext;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ku.Constants;
 import com.ku.common.KUException;
 import com.ku.model.Crawl;
 import com.ku.model.Node;
 import com.ku.model.Offer;
 import com.ku.service.EmailOfferProcessor;
 import com.ku.service.OfferManager;
+import com.ku.util.ApiUtil;
 import com.ku.util.StringUtil;
 
 @Service("emailOfferProcessor")
@@ -41,7 +51,9 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 	private OfferManager offerManager;
 	
 	private Node<String> nextNode;
-
+	@Autowired
+	ServletContext servletContext;
+	
 	@Autowired
 	public void setOfferManager(OfferManager offerManager) {
 		this.offerManager = offerManager;
@@ -51,16 +63,18 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 	public boolean processPayoomOffers() throws KUException, ParseException {
 		List<Offer> offers = new ArrayList<Offer>();
 		for (Map<String, String> offerMap : getOffers()) {
-			if (offerMap.get("L.P").contains("docs.google")
+			if (offerMap.get("L.P") != null && (offerMap.get("L.P").contains("docs.google")
 					|| (offerMap.get("L.P").contains("drive.google") || offerMap
-							.get("L.P").contains("dropbox.com"))) {
+							.get("L.P").contains("dropbox.com")))) {
 				continue;
 			}
 			Offer offer = new Offer();
 			offer.setMerchantName(offerMap.get("merchant"));
 			if (!StringUtil.isEmptyString(offerMap.get("Offer"))) {
 				offer.setOfferTitle(offerMap.get("Offer"));
-			} else {
+			} else if(!StringUtil.isEmptyString(offerMap.get("Payoom Exclusive Offer"))){
+				offer.setOfferTitle(offerMap.get("Payoom Exclusive Offer"));
+			}else {
 				offer.setOfferTitle(offerMap.get("offer"));
 			}
 			offer.setLabelsString(offerMap.get("labels"));
@@ -79,7 +93,6 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				Date offerEnd = new Date();
 				String end = offerMap.get("end").trim();
 				String[] endDate = end.split(" ");
-				System.out.println("========"+endDate[0]);
 				int day = 0;
 				if(endDate[0].contains("st")){
 					if(!StringUtil.isEmptyString(endDate[0].split("st")[0])){
@@ -97,6 +110,8 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 					if(!StringUtil.isEmptyString(endDate[0].split("rd")[0])){
 						day = Integer.parseInt(endDate[0].split("rd")[0]);
 					}
+				} else if(endDate[0].contains("today")){
+					offerEnd.setDate(offerEnd.getDate() + 1);
 				} else {
 					offerEnd.setDate(Integer.parseInt(endDate[0]));
 				}
@@ -151,9 +166,35 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 
 			Folder inbox = store.getFolder("INBOX");
 			inbox.open(Folder.READ_WRITE);
-
+			
+			Message[] messages=null;
+			    FlagTerm flagTerm=new FlagTerm(new Flags(Flags.Flag.SEEN), false);
+			    messages=inbox.search(flagTerm);
+			  System.out.println("message count ---------"+messages.length);
+			  for (int i = 0; i < messages.length; i++) {
+					Message message = messages[i];
+					System.out.println("subject :: "+message.getSubject());
+					if(message.getSubject().contains("Offer Updates")) {
+						if (message.getContentType().contains("multipart")) {
+							Multipart multiPart = (Multipart) message.getContent();
+							for (int j = 0; j < multiPart.getCount(); j++) {
+								try {
+									MimeBodyPart part = (MimeBodyPart) multiPart
+											.getBodyPart(j);
+									crawls.add(writePart(part));
+									inbox.setFlags(new Message[] {message}, new Flags(Flags.Flag.SEEN), true);
+								} catch (KUException e) {
+									continue;
+								}
+							}
+						}
+					} else {
+						inbox.setFlags(new Message[] {message}, new Flags(Flags.Flag.SEEN), true);
+					}
+				}
+			  
 			// creates a search criterion
-			SearchTerm searchTerm = new SearchTerm() {
+			/*SearchTerm searchTerm = new SearchTerm() {
 				@Override
 				public boolean match(Message message) {
 					Date searchDate = new Date();
@@ -183,7 +224,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 						crawls.add(writePart(part));
 					}
 				}
-			}
+			}*/
 			// close the store and folder objects
 			inbox.close(false);
 			store.close();
@@ -201,27 +242,41 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 	 * This method checks for content-type based on which, it processes and
 	 * fetches the content of the message
 	 */
-	public Crawl<String> writePart(Part p) throws Exception {
+	public Crawl<String> writePart(Part p) throws KUException {
 		Crawl<String> dll = new Crawl<String>();
-		if (p.isMimeType("text/plain")) {
-			Scanner scanner = new Scanner((String) p.getContent());
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-				try {
-					if (line.contains(":") && line.split(":").length < 2) {
-						if (scanner.hasNextLine()) {
-							String nextLine = scanner.nextLine();
-							if (!nextLine.trim().isEmpty()) {
-								line = line.concat(nextLine);
+		try {
+			if (p.isMimeType("text/plain")) {
+				Scanner scanner = new Scanner((String) p.getContent());
+				while (scanner.hasNextLine()) {
+					String line = scanner.nextLine();
+					try {
+						if (line.contains(":") && line.split(":").length < 2) {
+							if (scanner.hasNextLine()) {
+								String nextLine = scanner.nextLine();
+								if (!nextLine.trim().isEmpty()) {
+									line = line.concat(nextLine);
+								}
 							}
 						}
+
+						if(StringUtil.isEmptyString(line.trim()) && (dll.getTail().getElement().contains("Offer*:")
+								|| dll.getTail().getElement().contains("Offer* :")
+								|| dll.getTail().getElement().contains("Offer:")
+								|| dll.getTail().getElement().contains("Offer :"))){
+							continue;
+						} else {
+							dll.addLast(line);
+						}
+					} catch (NoSuchElementException e) {
+						continue;
 					}
-					dll.addLast(line);
-				} catch (NoSuchElementException e) {
-					continue;
 				}
+				scanner.close();
 			}
-			scanner.close();
+		} catch (MessagingException | IOException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			throw new KUException("oops problem in crawl email");
 		}
 		return dll;
 	}
@@ -235,7 +290,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				if (getNextNode().getElement().trim().length() == 0) {
 					if (checkIsOffers(getNextNode())) {
 						Map<String, String> offer = new HashMap<String, String>();
-						if (!getNextNode().getPrev().getElement().contains(":")) {
+						if (StringUtil.isEmptyString(getNextNode().getPrev().getPrev().getElement().trim()) && !getNextNode().getPrev().getElement().contains(":") && !getNextNode().getPrev().getElement().contains("-")) {
 							merchant = getNextNode().getPrev().getElement();
 						}
 						merchant = merchant.replace("*", "");
@@ -304,7 +359,6 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				SimpleDateFormat formatter = new SimpleDateFormat("dd MMM");
 				Date today = new Date();
 				String result = formatter.format(today);
-				System.out.println("Result: " + result);
 				offer.put("end", result);
 			} else {
 				if (offer.get("others") != null) {
@@ -321,16 +375,95 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 	}
 
 	public static boolean checkIsOffers(Node<String> node) {
+		System.out.println("next offer check :: " + node.getNext().getElement());
 		if (node.getNext().getElement().contains("Offer*:")
 				|| node.getNext().getElement().contains("Offer* :")
-				&& node.getNext().getElement().contains("Offer:")
+				|| node.getNext().getElement().contains("Offer:")
 				|| node.getNext().getElement().contains("Offer :")) {
+			System.out.println("next offer check result :: true");
 			return true;
 		} else {
+			System.out.println("next offer check result :: false");
 			return false;
 		}
 	}
 
+	public boolean pullFlipkartOffers() throws KUException {
+		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, String> headers = new HashMap<String, String>();
+		headers.put("Content-Type", "application/json");
+		headers.put("Fk-Affiliate-Token",
+				"ef77d485ad7b418984aeea01d2d3eaa9");
+		headers.put("Fk-Affiliate-Id", "adminmuni");
+		params.put("headers", headers);
+		try {
+			String dotdResponse = ApiUtil.getFlipkartData("https://affiliate-api.flipkart.net/affiliate/offers/v1/dotd/json", params);
+			offerManager.saveOffers(processFlipkartResponse(dotdResponse));
+			String topResponse = ApiUtil.getFlipkartData("https://affiliate-api.flipkart.net/affiliate/offers/v1/top/json", params);
+			offerManager.saveOffers(processFlipkartResponse(topResponse));
+		} catch (IOException e) {
+			throw new KUException(e.getMessage(), e);
+		} catch (org.json.simple.parser.ParseException e) {
+			throw new KUException(e.getMessage(), e);
+		}
+		return true;
+	}
+	
+	private List<Offer> processFlipkartResponse(String response) throws KUException, IOException, org.json.simple.parser.ParseException{
+		JSONParser parser = new JSONParser();
+		JSONObject offersJson = (JSONObject) parser.parse(response);
+		System.out.println("jsonnnnnnnnnnn ========= " + offersJson);
+		JSONArray deals = (JSONArray) offersJson.get("dotdList");
+		List<Offer> offers = new ArrayList<Offer>();
+		for (int i = 0 ; i < deals.size(); i++) {
+			JSONObject offerJson = (JSONObject)deals.get(i);
+			Offer offer = new Offer();
+			offer.setOfferTitle(offerJson.get("title").toString());
+			offer.setDescription(offerJson.get("description").toString());
+			offer.setTargetURL(offerJson.get("url").toString());
+			if(!StringUtil.isEmptyString(offerJson.get("imageUrls"))) {
+				JSONArray images = (JSONArray)offerJson.get("imageUrls");
+				for (int j = 0 ; j < images.size(); j++) {
+					JSONObject image = (JSONObject)images.get(j);
+					if(StringUtil.isEmptyString(image.get("url"))) {
+						continue;
+					} else {
+						String uploadDir = servletContext.getRealPath("/files");
+						File f = new File(uploadDir);
+						boolean isImagesPath = false;
+						if(!f.exists()) {
+							uploadDir = servletContext.getRealPath("/images");
+							isImagesPath = true;
+						}
+						String path = Constants.FILE_SEP
+								+ "offers"
+								+ Constants.FILE_SEP
+								+ "flipkart"
+								+ Constants.FILE_SEP;
+						f = new File(uploadDir);
+						if(!f.exists()) {
+							f.mkdirs();
+						}
+						path += offer.getOfferTitle().replaceAll(" ", "-").replaceAll("%", "-percent")
+								+".jpg";
+						ApiUtil.saveImageFromUrl(image.get("url").toString(), uploadDir+path);
+						if(isImagesPath){
+							offer.setImagePath("/images"+Constants.FILE_SEP+path);
+						} else {
+							offer.setImagePath("/files"+Constants.FILE_SEP+path);
+						}
+						break;
+					}
+				}
+			}
+			offer.setLabelsString("flipkart, offers, deals, coupons");
+			offer.setMerchantName("flipkart");
+			offer.setSource("flipkart");
+			offers.add(offer);
+		}
+		return offers;
+	}
+	
 	public Node<String> getNextNode() {
 		return nextNode;
 	}
@@ -338,4 +471,6 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 	public void setNextNode(Node<String> nextNode) {
 		this.nextNode = nextNode;
 	}
+	
+	
 }

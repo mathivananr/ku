@@ -171,7 +171,7 @@ public class MerchantController extends BaseFormController {
 				.getFile("file");
 		if (file != null && !file.isEmpty()) {
 			// the directory to upload to
-			String uploadDir = getServletContext().getRealPath("/file");
+			String uploadDir = getServletContext().getRealPath("/files");
 			uploadDir += Constants.FILE_SEP
 					+ "merchant"
 					+ Constants.FILE_SEP

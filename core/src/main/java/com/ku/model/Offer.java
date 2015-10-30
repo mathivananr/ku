@@ -1,6 +1,7 @@
 package com.ku.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -48,11 +49,13 @@ public class Offer extends BaseObject implements Serializable {
 	private int userCount;
 	private Calendar offerStart = new GregorianCalendar();
 	private Calendar offerEnd;
+	private String formattedEnd;
 	private Calendar createdOn = new GregorianCalendar();
 	private Calendar updatedOn = new GregorianCalendar();
 	private String createdBy;
 	private String updatedBy;
 	private boolean enabled;
+	private boolean expired;
 	
 	public Offer() {
 		super();
@@ -167,13 +170,15 @@ public class Offer extends BaseObject implements Serializable {
 	public String getLabelsString() {
 		if(StringUtil.isEmptyString(labelsString)) {
 			StringBuffer stringBuffer = new StringBuffer();
-			for (OfferLabel label : getLabels()) {
-					if(label != null){
-						if (stringBuffer.length() > 0) {
-							stringBuffer.append(", ");
+			if(getLabels() != null){
+				for (OfferLabel label : getLabels()) {
+						if(label != null){
+							if (stringBuffer.length() > 0) {
+								stringBuffer.append(", ");
+							}
+							stringBuffer.append(label.getLabel());
 						}
-						stringBuffer.append(label.getLabel());
-					}
+				}
 			}
 			return stringBuffer.toString();
 		} else {
@@ -221,6 +226,20 @@ public class Offer extends BaseObject implements Serializable {
 		this.offerEnd = offerEnd;
 	}
 
+	@Transient
+	public String getFormattedEnd() {
+		if(offerEnd != null){
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE, MMM d, ''yy");
+			return simpleDateFormat.format(offerEnd.getTime());
+		} else {
+			return "Until Stock";
+		}
+	}
+
+	public void setFormattedEnd(String formattedEnd) {
+		this.formattedEnd = formattedEnd;
+	}
+
 	@Column(name = "is_enabled", columnDefinition = "boolean default true", nullable = false)
 	public boolean isEnabled() {
 		return enabled;
@@ -228,6 +247,15 @@ public class Offer extends BaseObject implements Serializable {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	@Column(name = "is_expired", columnDefinition = "boolean default false", nullable = false)
+	public boolean isExpired() {
+		return expired;
+	}
+
+	public void setExpired(boolean expired) {
+		this.expired = expired;
 	}
 
 	@Column(name = "created_on")

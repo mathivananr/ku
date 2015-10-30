@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.ku.common.KUException;
+import com.ku.model.Offer;
 import com.ku.service.OfferManager;
 
 @Controller
@@ -31,10 +32,16 @@ public class HomeController extends BaseFormController {
 			final HttpServletResponse response) throws KUException {
 		Model model = new ExtendedModelMap();
 		model.addAttribute("activeMenu", "offer-link");
-		model.addAttribute("offers", offerManager.getOffersByLabels(new ArrayList<String>(), 0 , 25));
 		model.addAttribute("pageTitle", "");
 		model.addAttribute("metaKeywords", "");
 		model.addAttribute("metaDescription", "");
+		model.addAttribute("label", "");
+		try {
+			model.addAttribute("offers", offerManager.getOffersByLabels(new ArrayList<String>(), 0 , 25));
+		} catch(KUException e) {
+			log.error(e.getMessage(), e);
+			model.addAttribute("offers", new ArrayList<Offer>());
+		}
 		return new ModelAndView("/ku/offers", model.asMap());
 	}
 }

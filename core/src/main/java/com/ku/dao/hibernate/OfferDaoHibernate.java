@@ -164,15 +164,20 @@ public class OfferDaoHibernate extends GenericDaoHibernate<Offer, Long>
 				}
 				count++;
 			}
-			if (queryCondition.length() == 0 ) {
-				queryCondition = " offer.offerEnd > :now";
+			/*if (queryCondition.length() == 0 ) {
+				queryCondition = " where (offer.offerEnd > :now or offer.expired = false)";
 			} else {
-				queryCondition = queryCondition + " and offer.offerEnd > :now";
+				queryCondition = queryCondition + " and (offer.offerEnd > :now or offer.expired = false)";
+			}*/
+			if (queryCondition.length() == 0 ) {
+				queryCondition = " where offer.expired = false";
+			} else {
+				queryCondition = queryCondition + " and offer.expired = false";
 			}
 			queryLimit = " order by offer.offerId desc";
 			Query query = getSession().createQuery(
 					queryString + queryAlies + queryCondition + queryLimit);
-			query.setCalendar("now", now);
+			//query.setCalendar("now", now);
 			query.setFirstResult(start);
 			query.setMaxResults(end);
 			return (List<Offer>) query.list();

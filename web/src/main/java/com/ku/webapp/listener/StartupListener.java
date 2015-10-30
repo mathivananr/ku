@@ -156,12 +156,47 @@ public class StartupListener implements ServletContextListener {
 
 		PropertyReader reader = PropertyReader.getInstance();
 		if(!StringUtil.isEmptyString(reader.getPropertyFromFile(Constants.DATA_TYPE_STRING,
-							Constants.APPLICATION_URL))) {
+							Constants.APP_URL_CONFIG_KEY))) {
 			context.setAttribute(
-					Constants.APPLICATION_URL_STRING,
+					Constants.APP_URL,
 					reader.getPropertyFromFile(Constants.DATA_TYPE_STRING,
-							Constants.APPLICATION_URL).toString());
+							Constants.APP_URL_CONFIG_KEY).toString());
 			log.debug("application url loaded");
+		}
+		
+		if (!StringUtil.isEmptyString(reader.getPropertyFromFile(
+				Constants.DATA_TYPE_STRING, Constants.APP_NAME_CONFIG_KEY))) {
+			context.setAttribute(
+					Constants.APP_NAME,
+					reader.getPropertyFromFile(Constants.DATA_TYPE_STRING,
+							Constants.APP_NAME_CONFIG_KEY).toString());
+			log.debug("application name loaded");
+		}
+
+		if (!StringUtil.isEmptyString(reader.getPropertyFromFile(
+				Constants.DATA_TYPE_STRING, Constants.APP_TITLE_CONFIG_KEY))) {
+			context.setAttribute(
+					Constants.APP_TITLE,
+					reader.getPropertyFromFile(Constants.DATA_TYPE_STRING,
+							Constants.APP_TITLE_CONFIG_KEY).toString());
+			log.debug("application title loaded");
+		}
+
+		if (!StringUtil.isEmptyString(reader.getPropertyFromFile(
+				Constants.DATA_TYPE_STRING, Constants.APP_META_KEYWORD_CONFIG_KEY))) {
+			context.setAttribute(
+					Constants.APP_META_KEYWORD,
+					reader.getPropertyFromFile(Constants.DATA_TYPE_STRING,
+							Constants.APP_META_KEYWORD_CONFIG_KEY).toString());
+			log.debug("application meta keywords loaded");
+		}
+		if (!StringUtil.isEmptyString(reader.getPropertyFromFile(
+				Constants.DATA_TYPE_STRING, Constants.APP_META_DESCRIPTION_CONFIG_KEY))) {
+			context.setAttribute(
+					Constants.APP_META_DESCRIPTION,
+					reader.getPropertyFromFile(Constants.DATA_TYPE_STRING,
+							Constants.APP_META_DESCRIPTION_CONFIG_KEY).toString());
+			log.debug("application meta description loaded");
 		}
 		
 		// Any manager extending GenericManager will do:

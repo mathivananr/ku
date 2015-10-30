@@ -28,6 +28,7 @@ public class OfferLabel extends BaseObject implements Serializable {
 	private String metaDescription;
 	private String createdBy;
 	private String updatedBy;
+	private boolean hidden;
 	private Calendar createdOn = new GregorianCalendar();
 	private Calendar updatedOn = new GregorianCalendar();
 	
@@ -121,6 +122,15 @@ public class OfferLabel extends BaseObject implements Serializable {
 
 	public void setUpdatedOn(Calendar updatedOn) {
 		this.updatedOn = updatedOn;
+	}
+
+	@Column(name = "is_hidden", columnDefinition = "boolean default false", nullable = false)
+	public boolean isHidden() {
+		return hidden;
+	}
+
+	public void setHidden(boolean hidden) {
+		this.hidden = hidden;
 	}
 
 	/**

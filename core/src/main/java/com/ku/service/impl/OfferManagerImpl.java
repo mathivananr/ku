@@ -4,13 +4,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.ku.common.KUException;
 import com.ku.dao.OfferDao;
@@ -27,7 +31,8 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 
 	private OfferDao offerDao;
 	private MerchantManager merchantManager;
-
+	private VelocityEngine velocityEngine;
+	
 	@Autowired
 	public OfferManagerImpl(OfferDao offerDao) {
 		super(offerDao);
@@ -37,6 +42,11 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 	@Autowired
 	public void setMerchantManager(MerchantManager merchantManager) {
 		this.merchantManager = merchantManager;
+	}
+
+	@Autowired
+	public void setVelocityEngine(VelocityEngine velocityEngine) {
+		this.velocityEngine = velocityEngine;
 	}
 
 	public Offer saveOffer(Offer offer) throws KUException {
@@ -127,13 +137,13 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 					offer.getMerchantName(), offer.getCouponCode(),
 					offer.getOfferEnd());
 			if (oldOffer == null) {
-				log.info("saving offer " + offer.getOfferTitle() + " for"
+				log.info("saving offer " + offer.getOfferTitle() + " for "
 						+ offer.getMerchantName());
 				updatedOffers.add(saveOffer(offer));
-				log.info("saved offer " + offer.getOfferTitle() + " for"
+				log.info("saved offer " + offer.getOfferTitle() + " for "
 						+ offer.getMerchantName());
 			} else {
-				log.info(offer.getOfferTitle() + " for"
+				log.info(offer.getOfferTitle() + " for "
 						+ offer.getMerchantName() + " already exist ");
 			}
 		}
@@ -186,6 +196,17 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 		return offerLabels;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getOffersContent(List<String> labels, int start, int end)
+			throws KUException {
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("offers", getOffersByLabels(labels, start, end));
+		return VelocityEngineUtils.mergeTemplateIntoString(velocityEngine,
+				"offers.vm", "UTF-8", model);
+	}
+	
 	public List<Offer> getAllOffers() throws KUException {
 		return offerDao.getAllOffers();
 	}

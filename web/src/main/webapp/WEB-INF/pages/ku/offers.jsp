@@ -1,12 +1,14 @@
 <%@ include file="/common/taglibs.jsp"%>
 
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	<input type="hidden" id="label" value="${label}"/>
+	<input type="hidden" id="pageNo" value=1 />
 	<div class="well">
 		<div class="row row-nomargin">
-			<h3><p class="theme-color">Offers</p></h3>
+			<h1><p class="theme-color">${label}</p></h1>
 		</div>
 	</div>
-	<div class="well">
+	<div class="well" id="offersList">
 		<c:forEach var="offer" items="${offers}">
 			<div class="well">
 				<div class="row row-nomargin">
@@ -45,8 +47,8 @@
 							<div class="text-center">
 								<p class="col-lg-10 col-md-10 col-sm-10 col-xs-10 offer-valid">
 									End : <c:choose>
-											  <c:when test="${not empty offer.offerEnd}">
-											    <fmt:formatDate value="${offer.offerEnd.time}" type="date"/>
+											  <c:when test="${not empty offer.formattedEnd}">
+											    ${offer.formattedEnd}
 											  </c:when>
 											  <c:otherwise>
 											    Until Stock
@@ -60,7 +62,9 @@
 						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 								<c:forEach var="offerLabel" items="${offer.labels}">
-									<span><a href="${fn:replace(offerLabel.label, ' ', '-')}" title="${offerLabel.label}" class="label label-info text-capitalize">${offerLabel.label}</a></span>
+									<c:if test="${offerLabel.hidden == false}">
+										<span><a href="${fn:replace(offerLabel.label, ' ', '-')}" title="${offerLabel.label}" class="label label-info text-capitalize">${offerLabel.label}</a></span>
+									</c:if>
 								</c:forEach>
 						</div>
 						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
@@ -68,11 +72,10 @@
 				</div>
 			</div>
 		</c:forEach>
-				
-		<div class="ajax-load-more lazyLoader">
-			<div class="btn-load-more btn-loadmore" data-pageno="1">
-				<p>Load More Offers</p>
-			</div>
+	</div>
+	<div id="loadOffers" class="ajax-load-more lazyLoader">
+		<div class="btn-load-more btn-loadmore" data-pageno="1">
+			<p align="center"><button id="loadMore" class="btn btn-default">Load More Offers</button></p>
 		</div>
 	</div>
 </div>

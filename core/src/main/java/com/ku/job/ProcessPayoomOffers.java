@@ -16,7 +16,7 @@ import com.ku.common.KUException;
 import com.ku.service.EmailOfferProcessor;
 
 /**
- * Sample job for schedule
+ * job to schedule the payoom offers processing 
  * 
  * @author mathi
  * 

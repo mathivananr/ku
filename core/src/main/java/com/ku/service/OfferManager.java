@@ -1,7 +1,10 @@
 package com.ku.service;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
+
+import org.json.simple.parser.ParseException;
 
 import com.ku.common.KUException;
 import com.ku.model.Offer;
@@ -40,4 +43,8 @@ public interface OfferManager extends GenericManager<Offer, Long> {
 	
 	List<Offer> getOffersByLabels(List<String> labels, int start, int end)
 			throws KUException;
+	
+	String getOffersContent(List<String> labels, int start, int end)
+			throws KUException;
+	
 }

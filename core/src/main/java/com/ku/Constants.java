@@ -145,9 +145,25 @@ public final class Constants {
 	
 	public static final String MERCHANT_TYPE_BOOKING = "Booking";
 	
-	public static final String APPLICATION_URL = "application.url";
+	public static final String APP_URL_CONFIG_KEY = "app.url";
 	
-	public static final String APPLICATION_URL_STRING = "applicationUrl";
+	public static final String APP_URL = "appUrl";
+	
+	public static final String APP_NAME_CONFIG_KEY = "app.name";
+	
+	public static final String APP_NAME = "appName";
+	
+	public static final String APP_TITLE_CONFIG_KEY = "app.title";
+	
+	public static final String APP_TITLE = "appTitle";
+	
+	public static final String APP_META_KEYWORD_CONFIG_KEY = "app.meta.keyword";
+	
+	public static final String APP_META_KEYWORD = "appMetaKeyword";
+	
+	public static final String APP_META_DESCRIPTION_CONFIG_KEY = "app.meta.description";
+	
+	public static final String APP_META_DESCRIPTION = "appMetaDescription";
 	
 	public static final String DEFAULT_SCHEDULER_GROUP = "ku";
 }

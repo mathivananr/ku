@@ -4,8 +4,9 @@ import java.text.ParseException;
 
 import com.ku.common.KUException;
 
-
 public interface EmailOfferProcessor {
 
 	boolean processPayoomOffers() throws KUException, ParseException;
+
+	boolean pullFlipkartOffers() throws KUException;
 }
