@@ -29,6 +29,7 @@ import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -69,68 +70,191 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				continue;
 			}
 			Offer offer = new Offer();
+			
 			offer.setMerchantName(offerMap.get("merchant"));
+			offerMap.remove("merchant");
+			System.out.println("   Offer   "+ offerMap.get("Offer"));
+			
 			if (!StringUtil.isEmptyString(offerMap.get("Offer"))) {
 				offer.setOfferTitle(offerMap.get("Offer"));
+				offerMap.remove("Offer");
 			} else if(!StringUtil.isEmptyString(offerMap.get("Payoom Exclusive Offer"))){
 				offer.setOfferTitle(offerMap.get("Payoom Exclusive Offer"));
+				offerMap.remove("Payoom Exclusive Offer");
 			}else {
 				offer.setOfferTitle(offerMap.get("offer"));
-			}
-			offer.setLabelsString(offerMap.get("labels"));
-			if (offerMap.containsKey("T&C")) {
-				offer.setDescription(offerMap.get("T&C"));
+				offerMap.remove("offer");
 			}
 			
-			if(offerMap.containsKey("others")) {
-				if(StringUtil.isEmptyString(offer.getDescription())){
-					offer.setDescription(offerMap.get("others"));
-				} else {
-					offer.setDescription(offer.getDescription() + offerMap.get("others"));
-				}
-			}
-			if(offerMap.containsKey("end")) {
+			offer.setLabelsString(offerMap.get("labels"));
+			offerMap.remove("labels");
+			
+			System.out.println("   end   "+ offerMap.get("end"));
+			if (offerMap.containsKey("end")
+					&& !offerMap.get("end").equalsIgnoreCase("Deal for the day")
+					&& !offerMap.get("end").equalsIgnoreCase("Deal for the today")
+					&& !offerMap.get("end").equalsIgnoreCase("Deal of the day")
+					&& !offerMap.get("end").equalsIgnoreCase("Stock till last")
+					&& !offerMap.get("end").equalsIgnoreCase("till stock last")
+					&& !offerMap.get("end").equalsIgnoreCase("Limited period")
+					&& !offerMap.get("end").equalsIgnoreCase("L.P")
+					&& !offerMap.get("end").contains("Every ")
+					&& !offerMap.get("end").contains("Each ")
+					&& !offerMap.get("end").contains("days from today")) {
 				Date offerEnd = new Date();
 				String end = offerMap.get("end").trim();
-				String[] endDate = end.split(" ");
-				int day = 0;
-				if(endDate[0].contains("st")){
-					if(!StringUtil.isEmptyString(endDate[0].split("st")[0])){
-						day = Integer.parseInt(endDate[0].split("st")[0]);
-					}
-				} else if(endDate[0].contains("nd")){
-					if(!StringUtil.isEmptyString(endDate[0].split("nd")[0])){
-						day = Integer.parseInt(endDate[0].split("nd")[0]);
-					}
-				} else if(endDate[0].contains("th")){
-					if(!StringUtil.isEmptyString(endDate[0].split("th")[0])) {
-						day = Integer.parseInt(endDate[0].split("th")[0]);
-					}
-				} else if(endDate[0].contains("rd")){
-					if(!StringUtil.isEmptyString(endDate[0].split("rd")[0])){
-						day = Integer.parseInt(endDate[0].split("rd")[0]);
-					}
-				} else if(endDate[0].contains("today")){
-					offerEnd.setDate(offerEnd.getDate() + 1);
-				} else {
-					offerEnd.setDate(Integer.parseInt(endDate[0]));
+				end = end.replaceAll("  ", " ");
+				if (end.contains(" to ") && !end.contains("AM to ")
+						&& !end.contains("PM to ")) {
+					end = end.split(" to ")[1];
 				}
 				
-				if(day > 0) {
-					Calendar offerExpire = new GregorianCalendar();
-					Date date = new SimpleDateFormat("MMM").parse(endDate[1]);
-					offerEnd.setDate(day);
-					offerEnd.setMonth(date.getMonth());
-					offerExpire.setTime(offerEnd);
-					offer.setOfferEnd(offerExpire);
+				if(end.contains(" and ")){
+						end = end.split(" and ")[1];
 				}
-			}
+				 
+				if(end.contains(" & ")){
+					end = end.split(" & ")[1];
+				}
+				
+				if(end.contains(" on ")){
+					end = end.split(" on ")[1];
+				}
+				
+				if(end.contains("Only applicable for ")){
+					end = end.split("Only applicable for ")[1];
+				}
+				
+				if(end.contains("Will end on ")){
+					end = end.split("Will end on ")[1];
+				}
+				
+				if(end.contains("Till ")){
+					end = end.split("Till ")[1];
+				}
+				end = end.replaceAll(" of ", " ");
+				if(end.equalsIgnoreCase("End Of the Month") || !end.contains(" ")){
+					Calendar offerExpire = new GregorianCalendar();
+					offerExpire
+							.set(Calendar.DAY_OF_MONTH, offerExpire
+									.getActualMaximum(Calendar.DAY_OF_MONTH));
+					offer.setOfferEnd(offerExpire);
+				} else {
+					String[] endDate = end.split(" ");
+					int day = 0;
+					String month = endDate[1]; 
+					if(endDate[0].contains("st")){
+						if(!StringUtil.isEmptyString(endDate[0].split("st")[0])){
+							day = Integer.parseInt(endDate[0].split("st")[0]);
+						}
+					} else if(endDate[0].contains("nd")){
+						if(!StringUtil.isEmptyString(endDate[0].split("nd")[0])){
+							day = Integer.parseInt(endDate[0].split("nd")[0]);
+						}
+					} else if(endDate[0].contains("th")){
+						if(!StringUtil.isEmptyString(endDate[0].split("th")[0])) {
+							day = Integer.parseInt(endDate[0].split("th")[0]);
+						}
+					} else if(endDate[0].contains("Th")){
+						if(!StringUtil.isEmptyString(endDate[0].split("Th")[0])) {
+							day = Integer.parseInt(endDate[0].split("Th")[0]);
+						}
+					} else if(endDate[0].contains("h")){
+						if(!StringUtil.isEmptyString(endDate[0].split("h")[0])) {
+							day = Integer.parseInt(endDate[0].split("h")[0]);
+						}
+					} else if(endDate[0].contains("rd")){
+						if(!StringUtil.isEmptyString(endDate[0].split("rd")[0])){
+							day = Integer.parseInt(endDate[0].split("rd")[0]);
+						}
+					} else if(endDate[0].contains("today")){
+						offerEnd.setDate(offerEnd.getDate() + 1);
+					} else if(endDate[0].contains("-")) {
+						SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+						try {
+							Date date = formatter.parse(endDate[0]);
+							offerEnd = date;
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					} else if(endDate[0].contains("/")){
+						SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+						try {
+							Date date = formatter.parse(endDate[0]);
+							offerEnd = date;
+						} catch (ParseException e) {
+							e.printStackTrace();
+						}
+					} else if(!NumberUtils.isNumber(endDate[0]) && NumberUtils.isNumber(endDate[1])){
+						offerEnd.setDate(Integer.parseInt(endDate[1]));
+						month = endDate[0];
+					} else {
+						offerEnd.setDate(Integer.parseInt(endDate[0]));
+					}
+					
+					if(day > 0) {
+						Calendar offerExpire = new GregorianCalendar();
+						Date date = new SimpleDateFormat("MMM").parse(month);
+						/*if(endDate[1].equalsIgnoreCase(" ") && StringUtil.isEmptyString(endDate[2])){
+							date = new SimpleDateFormat("MMM").parse(endDate[2]);
+						}*/
+						offerEnd.setDate(day);
+						offerEnd.setMonth(date.getMonth());
+						offerExpire.setTime(offerEnd);
+						offer.setOfferEnd(offerExpire);
+					}
+				}
+				offerMap.remove("end");
+			} 
+			
+			System.out.println("   L.P   "+ offerMap.get("L.P"));
+			
 			if(!StringUtil.isEmptyString(offerMap.get("L.P"))){
 				offer.setTargetURL(offerMap.get("L.P"));
+				offerMap.remove("L.P");
 			}
+			
+			System.out.println("   Coupon   "+ offerMap.get("Coupon"));
 			if (offerMap.containsKey("Coupon")) {
 				offer.setLabelsString(offer.getLabelsString() + ", coupons");
 				offer.setCouponCode(offerMap.get("Coupon"));
+				offerMap.remove("Coupon");
+			}
+			
+			if (offerMap.containsKey("Coupn")) {
+				offer.setLabelsString(offer.getLabelsString() + ", coupons");
+				offer.setCouponCode(offerMap.get("Coupn"));
+				offerMap.remove("Coupn");
+			}
+			
+			if (offerMap.containsKey("Code")) {
+				offer.setLabelsString(offer.getLabelsString() + ", coupons");
+				offer.setCouponCode(offerMap.get("Code"));
+				offerMap.remove("Code");
+			}
+			
+			for( String key : offerMap.keySet() ) {
+	            if(StringUtil.isEmptyString(offer.getDescription())){
+	            	offer.setDescription(key + " : \n " + offerMap.get(key));
+	            } else {
+	            	offer.setDescription(offer.getDescription() + " \n " + key + " : \n " + offerMap.get(key));
+	            }
+	        }
+			
+			if(!StringUtil.isEmptyString(offer.getMerchantName())){
+				offer.setMerchantName(offer.getMerchantName().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
+			}
+			if(!StringUtil.isEmptyString(offer.getOfferTitle())){
+				offer.setOfferTitle(offer.getOfferTitle().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
+			}
+			if(!StringUtil.isEmptyString(offer.getDescription())){
+				offer.setDescription(offer.getDescription().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
+			}
+			if(!StringUtil.isEmptyString(offer.getCouponCode())){
+				offer.setCouponCode(offer.getCouponCode().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
+			}
+			if(!StringUtil.isEmptyString(offer.getTargetURL())){
+				offer.setTargetURL(offer.getTargetURL().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
 			}
 			offer.setSource("payoom");
 			offers.add(offer);
@@ -174,7 +298,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			  for (int i = 0; i < messages.length; i++) {
 					Message message = messages[i];
 					System.out.println("subject :: "+message.getSubject());
-					if(message.getSubject().contains("Offer Updates")) {
+					if(message.getSubject().contains("Offer Updates") || message.getSubject().contains("Offer updates") || message.getSubject().contains("offer updates") || message.getSubject().contains("offer Updates")) {
 						if (message.getContentType().contains("multipart")) {
 							Multipart multiPart = (Multipart) message.getContent();
 							for (int j = 0; j < multiPart.getCount(); j++) {
@@ -324,38 +448,51 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 		if (node.getElement().trim().length() > 0) {
 			if (node.getElement().contains(":")) {
 				String[] elementArray = node.getElement().split(":");
-				String value = elementArray[1];
-				if (elementArray.length > 2) {
-					for (int i = 2; i < elementArray.length; i++) {
-						value = value + ":" + elementArray[i];
-					}
-				}
-
-				if (elementArray[1].contains("|")) {
-					String[] valueArray = elementArray[1].split("|");
-					value = valueArray[0];
-					for (int i = 1; i < valueArray.length; i++) {
-						if (offer.get("others") != null) {
-							offer.put("others", offer.get("others")
-									+ valueArray[i]);
-						} else {
-							offer.put("others", valueArray[i]);
+				if (elementArray[0].trim().equalsIgnoreCase("Validity")
+						|| elementArray[0].trim().equalsIgnoreCase("Validity Ends") 
+						|| elementArray[0].trim().equalsIgnoreCase("Vailidty")
+						|| elementArray[0].trim().equalsIgnoreCase("Valdity")) {
+					System.out.println("elementArray[1] :::  " + elementArray[1]);
+					offer.put("end", elementArray[1].trim());
+				} else {
+					String value = elementArray[1];
+					if (elementArray.length > 2) {
+						for (int i = 2; i < elementArray.length; i++) {
+							value = value + ":" + elementArray[i];
 						}
 					}
+	
+					if (elementArray[1].contains("|")) {
+						String[] valueArray = elementArray[1].split("|");
+						value = valueArray[0];
+						for (int i = 1; i < valueArray.length; i++) {
+							if (offer.get("others") != null) {
+								offer.put("others", offer.get("others")
+										+ valueArray[i]);
+							} else {
+								offer.put("others", valueArray[i]);
+							}
+						}
+					}
+	
+					while (node.next.getElement().trim().length() > 0
+							&& !node.next.getElement().contains(":")
+							&& !node.next.getElement().contains("Valid till") 
+							&& !node.next.getElement().contains("Valid tilll")
+							&& !node.next.getElement().contains("Valid today only")) {
+						value = value + " " + node.next.getElement().trim();
+						node = node.getNext();
+					}
+					offer.put(elementArray[0].trim(), value.trim());
 				}
-
-				while (node.next.getElement().trim().length() > 0
-						&& !node.next.getElement().contains(":")
-						&& !node.next.getElement().contains("Valid till")
-						&& !node.next.getElement().contains("Valid today only")) {
-					value = value + " " + node.next.getElement().trim();
-					node = node.getNext();
-				}
-				offer.put(elementArray[0].trim(), value.trim());
-			} else if (node.getElement().contains("Valid till")) {
+			}else if (node.getElement().contains("Valid tilll")) {
+				offer.put("end",
+						node.getElement().split("Valid tilll")[1].trim());
+			} else if (node.getElement().contains("Valid till")
+					&& node.getElement().split("Valid till").length > 1) {
 				offer.put("end",
 						node.getElement().split("Valid till")[1].trim());
-			} else if (node.getElement().contains("Valid today only")) {
+			}else if (node.getElement().contains("Valid today only")) {
 				SimpleDateFormat formatter = new SimpleDateFormat("dd MMM");
 				Date today = new Date();
 				String result = formatter.format(today);
@@ -375,15 +512,12 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 	}
 
 	public static boolean checkIsOffers(Node<String> node) {
-		System.out.println("next offer check :: " + node.getNext().getElement());
 		if (node.getNext().getElement().contains("Offer*:")
 				|| node.getNext().getElement().contains("Offer* :")
 				|| node.getNext().getElement().contains("Offer:")
 				|| node.getNext().getElement().contains("Offer :")) {
-			System.out.println("next offer check result :: true");
 			return true;
 		} else {
-			System.out.println("next offer check result :: false");
 			return false;
 		}
 	}

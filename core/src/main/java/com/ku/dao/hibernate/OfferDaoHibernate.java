@@ -89,8 +89,9 @@ public class OfferDaoHibernate extends GenericDaoHibernate<Offer, Long>
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public Offer getOffer(String offerTitle, String merchantName,
-			String couponCode, Calendar offerEnd) throws KUException {
+			String couponCode, Calendar offerEnd, String targetURL) throws KUException {
 		Criteria criteria = getSession().createCriteria(Offer.class);
+		log.info("getting offer "+offerTitle+" for merchant "+merchantName);
 		if (!StringUtil.isEmptyString(offerTitle)) {
 			criteria.add(Restrictions.eq("offerTitle", offerTitle));
 		}
@@ -103,7 +104,11 @@ public class OfferDaoHibernate extends GenericDaoHibernate<Offer, Long>
 		if (!StringUtil.isEmptyString(offerEnd)) {
 			criteria.add(Restrictions.eq("offerEnd", offerEnd));
 		}
+		if (!StringUtil.isEmptyString(targetURL)) {
+			criteria.add(Restrictions.eq("targetURL", targetURL));
+		}
 		List<Offer> offers = criteria.list();
+		log.info("offers size"+offers.size());
 		if (offers != null && offers.size() > 0) {
 			return offers.get(0);
 		} else {

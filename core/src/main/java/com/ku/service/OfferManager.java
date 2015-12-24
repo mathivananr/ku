@@ -21,7 +21,7 @@ public interface OfferManager extends GenericManager<Offer, Long> {
 	Offer getOfferByTitle(String offerTitle) throws KUException;
 
 	Offer getOffer(String offerTitle, String merchantName,
-			String couponCode, Calendar offerEnd) throws KUException;
+			String couponCode, Calendar offerEnd, String targetURL) throws KUException;
 			
 	List<Offer> getOffersByLabel(String label) throws KUException;
 

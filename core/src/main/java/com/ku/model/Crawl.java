@@ -63,7 +63,7 @@ public class Crawl<E> {
 			head = tmp;
 		}
 		size++;
-		System.out.println("adding: " + element);
+		//System.out.println("adding: " + element);
 	}
 
 	/**

@@ -27,7 +27,7 @@
     </form>
 
     <div id="actions" class="btn-group">
-        <a class="btn btn-primary" href="<c:url value='/add-coupon?method=Add&from=list'/>">
+        <a class="btn btn-primary" href="<c:url value='/admin/add-coupon?method=Add&from=list'/>">
             <i class="icon-plus icon-white"></i> <fmt:message key="button.add"/></a>
 
         <a class="btn btn-default" href="<c:url value='/home'/>">
@@ -36,17 +36,17 @@
 
     <display:table name="offerList" cellspacing="0" cellpadding="0" requestURI=""
                    defaultsort="1" id="offers" pagesize="25" class="table table-condensed table-striped table-hover" export="true">
-        <display:column property="offerId" escapeXml="true" sortable="true" titleKey="offers.offerId" style="width: 25%"
-                        url="/edit-coupon?from=list" paramId="offerId" paramProperty="offerId"/>
+        <display:column property="offerId" escapeXml="true" sortable="true" titleKey="offers.offerId" style="width: 5%"
+                        url="/admin/edit-coupon?from=list" paramId="offerId" paramProperty="offerId"/>
         <display:column property="offerTitle" escapeXml="true" sortable="true" titleKey="offers.title"
-                        style="width: 34%"/>
+                        style="width: 20%"/>
         <display:column property="description" escapeXml="true" sortable="true" titleKey="offers.description"
-                        style="width: 34%"/>
+                        style="width: 20%"/>
         <display:column property="couponCode" escapeXml="true" sortable="true" titleKey="offers.code"
-                        style="width: 34%"/>
-		<display:column property="offerEnd" escapeXml="true" sortable="true" titleKey="offers.offerEnd"
-                        style="width: 34%"/>
-        <display:column property="description" escapeXml="true" sortable="true" titleKey="offers.description"
+                        style="width: 5%"/>
+		<display:column property="formattedEnd" escapeXml="true" sortable="true" titleKey="offers.offerEnd"
+                        style="width: 15%"/>
+        <%-- <display:column property="description" escapeXml="true" sortable="true" titleKey="offers.description" --%>
         style="width: 34%"/>
         <display:setProperty name="paging.banner.item_name"><fmt:message key="offerList.offer"/></display:setProperty>
         <display:setProperty name="paging.banner.items_name"><fmt:message key="offerList.offers"/></display:setProperty>

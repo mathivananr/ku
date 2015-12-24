@@ -135,7 +135,7 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 		for (Offer offer : offers) {
 			Offer oldOffer = getOffer(offer.getOfferTitle(),
 					offer.getMerchantName(), offer.getCouponCode(),
-					offer.getOfferEnd());
+					offer.getOfferEnd(), offer.getTargetURL());
 			if (oldOffer == null) {
 				log.info("saving offer " + offer.getOfferTitle() + " for "
 						+ offer.getMerchantName());
@@ -228,9 +228,9 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 	}
 
 	public Offer getOffer(String offerTitle, String merchantName,
-			String couponCode, Calendar offerEnd) throws KUException {
+			String couponCode, Calendar offerEnd, String targetURL) throws KUException {
 		return offerDao
-				.getOffer(offerTitle, merchantName, couponCode, offerEnd);
+				.getOffer(offerTitle, merchantName, couponCode, offerEnd,targetURL);
 	}
 
 	public OfferLabel getOfferLabelById(Long labelId) throws KUException {

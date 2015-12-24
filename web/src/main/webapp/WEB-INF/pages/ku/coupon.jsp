@@ -23,7 +23,7 @@
 	</spring:bind>
 
 	<form:form commandName="offer" method="post" enctype="multipart/form-data"
-		action="/add-coupon" id="offerForm"
+		action="/admin/add-coupon" id="offerForm"
 		autocomplete="off" cssClass="well">
 		<form:hidden path="offerId" />
 		<div class="row">
@@ -48,14 +48,14 @@
 		
 		<div class="row">
 			<div class="form-group">
-				<input type="text" class="form-control" name="offerStart"
+				<form:input cssClass="form-control" path="offerStart"
 					id="offerStart" placeholder="Start"/>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="form-group">
-				<input type="text" class="form-control" name="offerEnd"
+				<form:input cssClass="form-control" path="offerEnd"
 					id="offerEnd" placeholder="End"/>
 			</div>
 		</div>

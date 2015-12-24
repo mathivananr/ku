@@ -1,0 +1,65 @@
+#foreach( $offer in $offers )
+	<div class="well">
+		<div class="row row-nomargin">
+			<div id="offer-left" class="col-lg-2 col-md-2 col-sm-4 col-xs-12">
+				<div id="offer-image" class="offer-image">
+					#if($offer.imagePath)
+						<div class="text-center"><a href="$offer.targetURL" ><img class="col-lg-12 col-md-12 col-sm-10 col-xs-10" alt="$offer.merchantName" src="$offer.imagePath"></a></div>
+					#elseif($offer.merchantLogoPath)
+					    <div class="text-center"><a href="$offer.targetURL" ><img class="col-lg-12 col-md-12 col-sm-10 col-xs-10" alt="$offer.merchantName" src="$offer.merchantLogoPath"></a></div>
+					#else
+					    <div class="text-center"><p class="col-lg-10 col-md-10 col-sm-12 col-xs-12 offer-image-merchant-name">$offer.merchantName</p></div>
+					#end
+				 </div>
+			</div>
+			<div id="offer-center" class="col-lg-7 col-md-7 col-sm-5 col-xs-12">
+				<div id="offer-title" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 margin-bottom10"><h4>
+					<strong>
+						#if($offer.offerTitle)
+							$offer.offerTitle
+						#end
+					</strong></h4></div>
+				<div id="offer-body" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					#if($offer.description)
+						<p>$offer.description</p>
+					#end
+				</div>
+			</div>
+			<div id="offer-right" class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+					<div class="text-center"><p class="col-lg-10 col-md-10 col-sm-10 col-xs-10 offer-hint">
+						#if($offer.offerHint)
+							$offer.offerHint
+						#end				
+					</div>	
+					<div class="text-center"><p class="col-md-10 col-sm-10 col-xs-10"><a href="$offer.targetURL" class="btn btn-ku" target="_blank">VISIT OFFER</a></p></div>
+					#if($offer.couponCode)
+						<div class="text-center"><p class="col-lg-10 col-md-10 col-sm-10 col-xs-10 offer-coupon-code">Code : $offer.couponCode</p></div>
+					#else
+				    	<div class="text-center"><p class="col-lg-10 col-md-10 col-sm-10 col-xs-10 offer-coupon-code">Deal Active</p></div>
+					#end
+					<div class="text-center">
+						<p class="col-lg-10 col-md-10 col-sm-10 col-xs-10 offer-valid">
+							End : 
+								#if($offer.formattedEnd)
+								    $offer.formattedEnd
+								#else
+								    Until Stock
+								#end
+						</p>
+					</div>
+			</div>
+			<hr/>
+			<div id="offer-footer" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+					#foreach( $offerLabel in $offer.labels )
+						#if($offerLabel.hidden == false)
+							<span><a href="$offerLabel.label.replace(' ', '-')" title="$offerLabel.label" class="label label-info text-capitalize">$offerLabel.label</a></span>
+						#end
+					#end
+				</div>
+				<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"></div>
+			</div>
+		</div>
+	</div>
+#end

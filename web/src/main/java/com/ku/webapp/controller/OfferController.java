@@ -40,7 +40,7 @@ public class OfferController extends BaseFormController {
 		this.offerManager = offerManager;
 	}
 
-	@RequestMapping(value = "/add-coupon", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/add-coupon", method = RequestMethod.GET)
 	public ModelAndView showCouponForm(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
 		Model model = new ExtendedModelMap();
@@ -49,7 +49,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/coupon", model.asMap());
 	}
 
-	@RequestMapping(value = "/add-coupon", method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/add-coupon", method = RequestMethod.POST)
 	@ModelAttribute
 	public ModelAndView addCoupon(Offer offer, BindingResult errors,
 			final HttpServletRequest request, final HttpServletResponse response) {
@@ -65,7 +65,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/coupon", model.asMap());
 	}
 
-	@RequestMapping(value = "/coupon-list", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/coupon-list", method = RequestMethod.GET)
 	public ModelAndView updateCoupon(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
 		Model model = new ExtendedModelMap();
@@ -74,7 +74,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/coupon-list", model.asMap());
 	}
 
-	@RequestMapping(value = "/edit-coupon", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/edit-coupon", method = RequestMethod.GET)
 	public ModelAndView showCouponUpdate(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
 		String offerId = request.getParameter("offerId");
@@ -85,7 +85,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/coupon", model.asMap());
 	}
 
-	@RequestMapping(value = "/add-label", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/add-label", method = RequestMethod.GET)
 	public ModelAndView showOfferLabelForm(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
 		Model model = new ExtendedModelMap();
@@ -94,7 +94,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/offer-label", model.asMap());
 	}
 
-	@RequestMapping(value = "/add-label", method = RequestMethod.POST)
+	@RequestMapping(value = "/admin/add-label", method = RequestMethod.POST)
 	@ModelAttribute
 	public ModelAndView addLabel(OfferLabel offerLabel, BindingResult errors,
 			final HttpServletRequest request, final HttpServletResponse response) {
@@ -110,7 +110,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/offer-label", model.asMap());
 	}
 
-	@RequestMapping(value = "/edit-label", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/edit-label", method = RequestMethod.GET)
 	public ModelAndView showOfferLabelUpdate(final HttpServletRequest request,
 			final HttpServletResponse response){
 		String labelId = request.getParameter("labelId");
@@ -127,7 +127,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/offer-label", model.asMap());
 	}
 	
-	@RequestMapping(value = "/label-list", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/label-list", method = RequestMethod.GET)
 	public ModelAndView listLabel(final HttpServletRequest request,
 			final HttpServletResponse response){
 		Model model = new ExtendedModelMap();
@@ -157,9 +157,9 @@ public class OfferController extends BaseFormController {
 			}
 		}
 		if(!StringUtil.isEmptyString(pageNo)) {
-			int endLimit = Integer.parseInt(pageNo) * 25;
-			int startLimit = endLimit - 25;
-			String content = offerManager.getOffersContent(labels, startLimit , 25); 
+			int endLimit = Integer.parseInt(pageNo) * 250;
+			int startLimit = endLimit - 250;
+			String content = offerManager.getOffersContent(labels, startLimit , 250); 
 			return content;
 		} else {
 			return "";
@@ -192,7 +192,7 @@ public class OfferController extends BaseFormController {
 		Model model = new ExtendedModelMap();
 		model.addAttribute("label", label);
 		model.addAttribute("activeMenu", "offer-link");
-		model.addAttribute("offers", offerManager.getOffersByLabels(labels, 0 , 25));
+		model.addAttribute("offers", offerManager.getOffersByLabels(labels, 0 , 250));
 		Date now = new Date();
 		SimpleDateFormat dt1 = new SimpleDateFormat("MMMMM d yyyy");
 		String title = (label.contains("offer") || label.contains("coupon") || label.contains("deal") ? label.replace("-", " ") : label.replace("-", " ") + " offers, deals, coupons ") + " - "+dt1.format(now);
