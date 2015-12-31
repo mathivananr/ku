@@ -14,17 +14,25 @@
         <js>/scripts/core/bootstrap-datetimepicker.min.js</js>
         <js>/scripts/script.js</js>
     </group>
-    <group name="ku">
+    <group name="ku-pre">
     	<!-- Fontawesome Icon font -->
         <css>/styles/core/font-awesome.min.css</css>
 		<!-- Twitter Bootstrap css -->
         <css>/styles/core/bootstrap.min.css</css>
 		<!-- Main Stylesheet -->
         <css>/styles/core/main.css</css>
+        <!-- date time picker -->
+        <css>/styles/core/bootstrap-datetimepicker.min.css</css>
+        
 		<!-- Main jQuery -->
         <js>/scripts/core/jquery-1.11.1.min.js</js>
 		<!-- Twitter Bootstrap -->
         <js>/scripts/core/bootstrap.min.js</js>
+        <!-- date time picker -->
+        <js>/scripts/core/moment.js</js>
+        <js>/scripts/core/bootstrap-datetimepicker.min.js</js>
+    </group>
+    <group name="ku-post">
         <!-- Custom Functions -->    
         <js>/scripts/core/custom.js</js>
     </group>

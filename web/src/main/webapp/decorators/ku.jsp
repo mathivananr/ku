@@ -51,7 +51,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/images/favicon.ico" />
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku.css" />
+	href="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku-pre.css" />
+<!-- Essential jQuery Plugins
+================================================== -->
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku-pre.js"></script>
 </head>
 
 <body id="body">
@@ -93,6 +97,18 @@
 					<li><a href="#team">Team</a></li>
 					<li><a href="#contact">Contact</a></li>
 				</ul>
+				<ul class="nav pull-right">
+		          <li class="dropdown" id="menuLogin">
+		            <a class="dropdown-toggle" href="#" data-toggle="dropdown" id="navLogin">Login</a>
+		            <div class="dropdown-menu" style="padding:17px;">
+		              <form class="form" id="formLogin"> 
+		                <input name="username" id="username" type="text" placeholder="Username"> 
+		                <input name="password" id="password" type="password" placeholder="Password"><br>
+		                <button type="button" id="btnLogin" class="btn">Login</button>
+		              </form>
+		            </div>
+		          </li>
+		        </ul>
 			</nav>
 			<!-- main nav -->
 
@@ -158,10 +174,9 @@
         
 	<a href="javascript:void(0);" id="back-top"><i
 		class="fa fa-angle-up fa-3x"></i></a>
-
-	<!-- Essential jQuery Plugins
-		================================================== -->
-	<script type="text/javascript"
-		src="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku.js"></script>
 </body>
+<!-- Essential jQuery Plugins
+================================================== -->
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku-post.js"></script>
 </html>

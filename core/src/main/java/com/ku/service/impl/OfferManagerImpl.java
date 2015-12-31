@@ -50,6 +50,7 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 	}
 
 	public Offer saveOffer(Offer offer) throws KUException {
+		
 		if (!StringUtil.isEmptyString(offer.getLabelsString())) {
 			List<String> labelsString = new ArrayList<String>();
 			String[] labelsArray = offer.getLabelsString().split(",");

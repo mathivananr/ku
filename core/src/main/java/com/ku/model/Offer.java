@@ -47,10 +47,10 @@ public class Offer extends BaseObject implements Serializable {
 	private String labelsString;
 	private String seoKeyword;
 	private int userCount;
-	private Calendar offerStart = new GregorianCalendar();
+	private Calendar offerStart;
 	private Calendar offerEnd;
 	private String formattedEnd;
-	private Calendar createdOn = new GregorianCalendar();
+	private Calendar createdOn;
 	private Calendar updatedOn = new GregorianCalendar();
 	private String createdBy;
 	private String updatedBy;

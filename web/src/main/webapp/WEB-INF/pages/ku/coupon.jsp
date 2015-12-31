@@ -23,9 +23,19 @@
 	</spring:bind>
 
 	<form:form commandName="offer" method="post" enctype="multipart/form-data"
-		action="/admin/add-coupon" id="offerForm"
+		action="/user/add-coupon" id="offerForm"
 		autocomplete="off" cssClass="well">
 		<form:hidden path="offerId" />
+		<form:hidden path="offerHint"/>
+		<form:hidden path="imagePath"/>
+		<form:hidden path="merchantLogoPath"/>
+		<form:hidden path="source"/>
+		<form:hidden path="seoKeyword"/>
+		<form:hidden path="userCount"/>
+		<form:hidden path="createdOn"/>
+		<form:hidden path="createdBy"/>
+		<form:hidden path="enabled"/>
+		<form:hidden path="expired"/>
 		<div class="row">
 			<div class="form-group">
 				<form:input cssClass="form-control" path="offerTitle"
@@ -36,6 +46,13 @@
 			<div class="form-group">
 				<form:textarea cssClass="form-control" path="description"
 					id="description" placeholder="Description"/>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="form-group">
+				<form:input cssClass="form-control" path="merchantName"
+					id="merchantName" placeholder="Merchant"/>
 			</div>
 		</div>
 		
@@ -81,7 +98,7 @@
 					<i class="icon-ok icon-white"></i>
 					<fmt:message key="button.save" />
 				</button>
-				<button type="submit" class="btn btn-default" name="cancel"
+				<button type="button" class="btn btn-default" name="cancel"
 					onclick="bCancel=true">
 					<i class="icon-remove"></i>
 					<fmt:message key="button.cancel" />
@@ -90,3 +107,14 @@
 		</div>
 	</form:form>
 </div>
+
+<script type="text/javascript">
+    $(function () {
+        $('#offerEnd').datetimepicker({
+        	format: 'MM/DD/YYYY'
+        });
+        $('#offerStart').datetimepicker({
+        	format: 'MM/DD/YYYY'
+        });
+    });
+</script>

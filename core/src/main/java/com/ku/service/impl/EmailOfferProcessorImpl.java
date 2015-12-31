@@ -159,6 +159,10 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 						if(!StringUtil.isEmptyString(endDate[0].split("Th")[0])) {
 							day = Integer.parseInt(endDate[0].split("Th")[0]);
 						}
+					} else if(endDate[0].contains("TH")){
+						if(!StringUtil.isEmptyString(endDate[0].split("TH")[0])) {
+							day = Integer.parseInt(endDate[0].split("TH")[0]);
+						}
 					} else if(endDate[0].contains("h")){
 						if(!StringUtil.isEmptyString(endDate[0].split("h")[0])) {
 							day = Integer.parseInt(endDate[0].split("h")[0]);
@@ -207,11 +211,25 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				offerMap.remove("end");
 			} 
 			
+			if(offerMap.containsKey("end")){
+				offerMap.remove("end");
+			}
+			
 			System.out.println("   L.P   "+ offerMap.get("L.P"));
 			
 			if(!StringUtil.isEmptyString(offerMap.get("L.P"))){
 				offer.setTargetURL(offerMap.get("L.P"));
 				offerMap.remove("L.P");
+			}
+			
+			if(!StringUtil.isEmptyString(offerMap.get("L.p"))){
+				offer.setTargetURL(offerMap.get("L.p"));
+				offerMap.remove("L.p");
+			}
+			
+			if(!StringUtil.isEmptyString(offerMap.get("LP"))){
+				offer.setTargetURL(offerMap.get("LP"));
+				offerMap.remove("LP");
 			}
 			
 			System.out.println("   Coupon   "+ offerMap.get("Coupon"));
@@ -235,12 +253,13 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			
 			for( String key : offerMap.keySet() ) {
 	            if(StringUtil.isEmptyString(offer.getDescription())){
+	            	System.out.println(key + " : \n " +offerMap.get(key));
 	            	offer.setDescription(key + " : \n " + offerMap.get(key));
 	            } else {
 	            	offer.setDescription(offer.getDescription() + " \n " + key + " : \n " + offerMap.get(key));
 	            }
 	        }
-			
+			System.out.println("description :: " + offer.getDescription());
 			if(!StringUtil.isEmptyString(offer.getMerchantName())){
 				offer.setMerchantName(offer.getMerchantName().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
 			}
@@ -248,7 +267,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				offer.setOfferTitle(offer.getOfferTitle().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
 			}
 			if(!StringUtil.isEmptyString(offer.getDescription())){
-				offer.setDescription(offer.getDescription().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
+				offer.setDescription(offer.getDescription().replaceAll("\n", "ku_newline").replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", "").replaceAll("ku_newline", "\n"));
 			}
 			if(!StringUtil.isEmptyString(offer.getCouponCode())){
 				offer.setCouponCode(offer.getCouponCode().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
@@ -256,6 +275,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			if(!StringUtil.isEmptyString(offer.getTargetURL())){
 				offer.setTargetURL(offer.getTargetURL().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
 			}
+			System.out.println(offer.getDescription());
 			offer.setSource("payoom");
 			offers.add(offer);
 			// offerManager.saveOffer(offer);
@@ -452,7 +472,6 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 						|| elementArray[0].trim().equalsIgnoreCase("Validity Ends") 
 						|| elementArray[0].trim().equalsIgnoreCase("Vailidty")
 						|| elementArray[0].trim().equalsIgnoreCase("Valdity")) {
-					System.out.println("elementArray[1] :::  " + elementArray[1]);
 					offer.put("end", elementArray[1].trim());
 				} else {
 					String value = elementArray[1];
@@ -466,11 +485,11 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 						String[] valueArray = elementArray[1].split("|");
 						value = valueArray[0];
 						for (int i = 1; i < valueArray.length; i++) {
-							if (offer.get("others") != null) {
-								offer.put("others", offer.get("others")
+							if (offer.get("note") != null) {
+								offer.put("note", offer.get("note")
 										+ valueArray[i]);
 							} else {
-								offer.put("others", valueArray[i]);
+								offer.put("note", valueArray[i]);
 							}
 						}
 					}
@@ -480,7 +499,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 							&& !node.next.getElement().contains("Valid till") 
 							&& !node.next.getElement().contains("Valid tilll")
 							&& !node.next.getElement().contains("Valid today only")) {
-						value = value + " " + node.next.getElement().trim();
+						value = value + " \n " + node.next.getElement().trim();
 						node = node.getNext();
 					}
 					offer.put(elementArray[0].trim(), value.trim());
@@ -498,11 +517,11 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				String result = formatter.format(today);
 				offer.put("end", result);
 			} else {
-				if (offer.get("others") != null) {
-					offer.put("others", offer.get("others")
+				if (offer.get("note") != null) {
+					offer.put("note", offer.get("note")
 							+ node.getElement().trim());
 				} else {
-					offer.put("others", node.getElement().trim());
+					offer.put("note", node.getElement().trim());
 				}
 			}
 			setNextNode(node.getNext());

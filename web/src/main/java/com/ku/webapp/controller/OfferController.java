@@ -40,7 +40,7 @@ public class OfferController extends BaseFormController {
 		this.offerManager = offerManager;
 	}
 
-	@RequestMapping(value = "/admin/add-coupon", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/add-coupon", method = RequestMethod.GET)
 	public ModelAndView showCouponForm(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
 		Model model = new ExtendedModelMap();
@@ -49,23 +49,29 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/coupon", model.asMap());
 	}
 
-	@RequestMapping(value = "/admin/add-coupon", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/add-coupon", method = RequestMethod.POST)
 	@ModelAttribute
-	public ModelAndView addCoupon(Offer offer, BindingResult errors,
+	public ModelAndView addCoupon(@ModelAttribute("offer") Offer offer, BindingResult errors,
 			final HttpServletRequest request, final HttpServletResponse response) {
 		Model model = new ExtendedModelMap();
 		try {
+			log.info("adding coupon :: " + offer.getOfferTitle());
 			offer = offerManager.saveOffer(offer);
 			model.addAttribute("offer", offer);
+			log.info("coupon added");
+			model.addAttribute("activeMenu", "offer-link");
+			model.addAttribute("offerList", offerManager.getAllOffers());
+			saveMessage(request, "coupon added successfully");
 		} catch (KUException e) {
 			e.printStackTrace();
+			saveError(request, "problem in adding coupon");
 			model.addAttribute("offer", offer);
 		}
 		model.addAttribute("activeMenu", "offer-link");
-		return new ModelAndView("/ku/coupon", model.asMap());
+		return new ModelAndView("/ku/coupon-list", model.asMap());
 	}
 
-	@RequestMapping(value = "/admin/coupon-list", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/coupon-list", method = RequestMethod.GET)
 	public ModelAndView updateCoupon(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
 		Model model = new ExtendedModelMap();
@@ -74,7 +80,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/coupon-list", model.asMap());
 	}
 
-	@RequestMapping(value = "/admin/edit-coupon", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/edit-coupon", method = RequestMethod.GET)
 	public ModelAndView showCouponUpdate(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
 		String offerId = request.getParameter("offerId");
@@ -85,7 +91,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/coupon", model.asMap());
 	}
 
-	@RequestMapping(value = "/admin/add-label", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/add-label", method = RequestMethod.GET)
 	public ModelAndView showOfferLabelForm(final HttpServletRequest request,
 			final HttpServletResponse response) throws KUException {
 		Model model = new ExtendedModelMap();
@@ -94,7 +100,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/offer-label", model.asMap());
 	}
 
-	@RequestMapping(value = "/admin/add-label", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/add-label", method = RequestMethod.POST)
 	@ModelAttribute
 	public ModelAndView addLabel(OfferLabel offerLabel, BindingResult errors,
 			final HttpServletRequest request, final HttpServletResponse response) {
@@ -110,7 +116,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/offer-label", model.asMap());
 	}
 
-	@RequestMapping(value = "/admin/edit-label", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/edit-label", method = RequestMethod.GET)
 	public ModelAndView showOfferLabelUpdate(final HttpServletRequest request,
 			final HttpServletResponse response){
 		String labelId = request.getParameter("labelId");
@@ -127,7 +133,7 @@ public class OfferController extends BaseFormController {
 		return new ModelAndView("/ku/offer-label", model.asMap());
 	}
 	
-	@RequestMapping(value = "/admin/label-list", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/label-list", method = RequestMethod.GET)
 	public ModelAndView listLabel(final HttpServletRequest request,
 			final HttpServletResponse response){
 		Model model = new ExtendedModelMap();

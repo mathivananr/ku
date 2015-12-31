@@ -23,10 +23,14 @@ import org.springframework.web.multipart.support.ByteArrayMultipartFileEditor;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import java.beans.PropertyEditorSupport;
 import java.io.Serializable;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -169,6 +173,26 @@ public class BaseFormController implements ServletContextAware {
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, null, 
                                     new CustomDateEditor(dateFormat, true));
+        binder.registerCustomEditor(Calendar.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String value) {
+                try {
+                    Calendar cal = new GregorianCalendar();
+                    cal.setTime(new SimpleDateFormat("MM/dd/yyyy").parse(value));
+                    setValue(cal);
+                } catch (ParseException e) {
+                    setValue(null);
+                }
+            }
+
+            @Override
+            public String getAsText() {
+                if (getValue() == null) {
+                    return "";
+                }
+                return new SimpleDateFormat("MM/dd/yyyy").format(((Calendar) getValue()).getTime());
+            }
+        });
     }
 
     /**

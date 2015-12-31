@@ -1,5 +1,5 @@
 <%@ include file="/common/taglibs.jsp"%>
-
+<% pageContext.setAttribute("newLine", "\n"); %>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 	<input type="hidden" id="label" value="${label}"/>
 	<input type="hidden" id="pageNo" value=1 />
@@ -30,7 +30,7 @@
 					<div id="offer-center" class="col-lg-7 col-md-7 col-sm-5 col-xs-12">
 						<div id="offer-title" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 margin-bottom10"><h4><strong>${offer.offerTitle}</strong></h4></div>
 						<div id="offer-body" class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-							<p>${offer.description}</p>
+							<p>${fn:replace(offer.description, newLine, '<br />')}</p>
 						</div>
 					</div>
 					<div id="offer-right" class="col-lg-3 col-md-3 col-sm-3 col-xs-12">

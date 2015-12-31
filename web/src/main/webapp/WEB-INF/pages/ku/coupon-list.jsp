@@ -14,7 +14,7 @@
 <div class="col-sm-10">
     <h2><fmt:message key="offerList.heading"/></h2>
 
-    <form method="get" action="${ctx}/admin/offers" id="searchForm" class="form-inline">
+    <form method="get" action="${ctx}/offers" id="searchForm" class="form-inline">
     <div id="search" class="text-right">
         <span class="col-sm-9">
             <input type="text" size="20" name="q" id="query" value="${param.q}"
@@ -27,7 +27,7 @@
     </form>
 
     <div id="actions" class="btn-group">
-        <a class="btn btn-primary" href="<c:url value='/admin/add-coupon?method=Add&from=list'/>">
+        <a class="btn btn-primary" href="<c:url value='/user/add-coupon?method=Add&from=list'/>">
             <i class="icon-plus icon-white"></i> <fmt:message key="button.add"/></a>
 
         <a class="btn btn-default" href="<c:url value='/home'/>">
@@ -37,7 +37,7 @@
     <display:table name="offerList" cellspacing="0" cellpadding="0" requestURI=""
                    defaultsort="1" id="offers" pagesize="25" class="table table-condensed table-striped table-hover" export="true">
         <display:column property="offerId" escapeXml="true" sortable="true" titleKey="offers.offerId" style="width: 5%"
-                        url="/admin/edit-coupon?from=list" paramId="offerId" paramProperty="offerId"/>
+                        url="/user/edit-coupon?from=list" paramId="offerId" paramProperty="offerId"/>
         <display:column property="offerTitle" escapeXml="true" sortable="true" titleKey="offers.title"
                         style="width: 20%"/>
         <display:column property="description" escapeXml="true" sortable="true" titleKey="offers.description"

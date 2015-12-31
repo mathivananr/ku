@@ -92,13 +92,13 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return id;
     }
 
-    @Column(nullable = false, length = 50, unique = true)
+    @Column(nullable = false, length = 250)
     @Field
     public String getUsername() {
         return username;
     }
 
-    @Column(nullable = false)
+    @Column(nullable = false , unique = true)
     @XmlTransient
     @JsonIgnore
     public String getPassword() {
