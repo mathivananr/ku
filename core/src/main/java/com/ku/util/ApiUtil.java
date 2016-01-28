@@ -1,6 +1,7 @@
 package com.ku.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,8 +45,7 @@ public class ApiUtil {
 	public static String getFlipkartData(String url, Map<String, Object> params) {
 		StringBuffer response = new StringBuffer();
 		try {
-			URL request = new URL(
-					"https://affiliate-api.flipkart.net/affiliate/offers/v1/dotd/json");
+			URL request = new URL(url);
 			HttpURLConnection connection = (HttpURLConnection) request
 					.openConnection();
 			connection.setRequestMethod("GET");
@@ -83,19 +83,22 @@ public class ApiUtil {
 	}
 	
 	public static void saveImageFromUrl(String imageUrl, String destinationFile) throws IOException {
-		URL url = new URL(imageUrl);
-		InputStream is = url.openStream();
-		OutputStream os = new FileOutputStream(destinationFile);
-
-		byte[] b = new byte[2048];
-		int length;
-
-		while ((length = is.read(b)) != -1) {
-			os.write(b, 0, length);
+		File file = new File(destinationFile);
+		if(!file.exists()) {
+			URL url = new URL(imageUrl);
+			InputStream is = url.openStream();
+			OutputStream os = new FileOutputStream(destinationFile);
+	
+			byte[] b = new byte[2048];
+			int length;
+	
+			while ((length = is.read(b)) != -1) {
+				os.write(b, 0, length);
+			}
+	
+			is.close();
+			os.close();
 		}
-
-		is.close();
-		os.close();
 	}
 
 }

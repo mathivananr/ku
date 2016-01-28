@@ -36,4 +36,6 @@ public interface OfferDao extends GenericDao<Offer, Long> {
 	List<Offer> getOffersByLabels(List<String> labels, int start, int end)
 			throws KUException;
 
+	List<String> getSuggestLabels(String label)
+			throws KUException;
 }

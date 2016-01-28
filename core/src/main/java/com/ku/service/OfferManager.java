@@ -47,4 +47,6 @@ public interface OfferManager extends GenericManager<Offer, Long> {
 	String getOffersContent(List<String> labels, int start, int end)
 			throws KUException;
 	
+	List<String> getSuggestLabels(String label)
+			throws KUException;
 }

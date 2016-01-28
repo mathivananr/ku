@@ -174,15 +174,21 @@ $('#loadMore').click(
 		function(e) {
 			var label = $("#label").val();
 			var pageNo = $("#pageNo").val();
-			var nextPageNo = parseInt(pageNo) + 1;
+			var nextPageNo = 2;
+			if(pageNo > 2){
+				nextPageNo = parseInt(pageNo) + 1;
+			}
 			$.ajax({
 				type : "GET",
 				url : "/get/offers",
 				data : "label=" + label + "&pageNo=" + nextPageNo,
 				success : function(response) {
 					if(response.length > 0){
+						nextPageNo = parseInt(pageNo) + 1;
 						$("#pageNo").val(nextPageNo);
 						$("#offersList").append(response);
+						$('#loadMore').attr('href','#!/'+nextPageNo);
+						
 					} else {
 						$("#loadOffers").html('<p align="center"><button id="noOffer" class="btn btn-default">No more offers available.</button></p>');
 					}

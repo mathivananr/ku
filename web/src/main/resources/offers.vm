@@ -55,7 +55,7 @@
 				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 					#foreach( $offerLabel in $offer.labels )
 						#if($offerLabel.hidden == false)
-							<span><a href="$offerLabel.label.replace(' ', '-')" title="$offerLabel.label" class="label label-info text-capitalize">$offerLabel.label</a></span>
+							<span><a href="/$offerLabel.label.replace(' ', '-')/" title="$offerLabel.label" class="label label-info text-capitalize">$offerLabel.label</a></span>
 						#end
 					#end
 				</div>

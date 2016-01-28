@@ -9,6 +9,8 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -211,6 +213,26 @@ public class OfferDaoHibernate extends GenericDaoHibernate<Offer, Long>
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws KUException
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<String> getSuggestLabels(String label)
+			throws KUException {
+
+		List<String> offerLabels = getSession()
+				.createCriteria(OfferLabel.class).setProjection(Projections.property("label"))
+				.add(Restrictions.like("label", label, MatchMode.ANYWHERE)).list();
+		if (offerLabels != null) {
+			return offerLabels;
+		} else {
+			return new ArrayList<String>();
+		}
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * 

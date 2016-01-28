@@ -246,4 +246,9 @@ public class OfferManagerImpl extends GenericManagerImpl<Offer, Long> implements
 			throws KUException {
 		return offerDao.getOffersByLabels(labels, start, end);
 	}
+	
+	public List<String> getSuggestLabels(String label)
+			throws KUException {
+		return offerDao.getSuggestLabels(label);
+	}
 }

@@ -51,11 +51,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="icon" href="/images/favicon.ico" />
 <link rel="stylesheet" type="text/css"
-	href="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku-pre.css" />
+	href="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku.css" />
 <!-- Essential jQuery Plugins
 ================================================== -->
 <script type="text/javascript"
-	src="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku-pre.js"></script>
+	src="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku.js"></script>
+	<script type="text/javascript"
+	src="${pageContext.request.contextPath}/scripts/core/custom.js"></script>
+	<script type='text/javascript' src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
 </head>
 
 <body id="body">
@@ -69,8 +72,14 @@
 	<!--         Fixed Navigation
         ==================================== -->
 	<header id="navigation" class="navbar-fixed-top navbar">
-		<div class="container">
-			<div class="navbar-header">
+		<!-- <div class="container"> -->
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+			<a class="navbar-brand" href="${applicationUrl}">
+					<h1 id="logo">
+						<img src="images/core/logo.png" alt="${applicationName}">
+					</h1>
+				</a>
+			<%-- <div class="navbar-header">
 				<!--     responsive nav button -->
 				<button type="button" class="navbar-toggle" data-toggle="collapse"
 					data-target=".navbar-collapse">
@@ -86,10 +95,9 @@
 					</h1>
 				</a>
 				<!-- logo -->
-			</div>
-
+			</div> --%>
 			<!-- main nav -->
-			<nav class="collapse navbar-collapse navbar-right" role="navigation">
+			<!-- <nav class="collapse navbar-collapse navbar-right" role="navigation">
 				<ul id="nav" class="nav navbar-nav">
 					<li class="current"><a href="#body">Home</a></li>
 					<li><a href="#features">Features</a></li>
@@ -109,9 +117,28 @@
 		            </div>
 		          </li>
 		        </ul>
-			</nav>
+			</nav> -->
 			<!-- main nav -->
 
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<div class="col-lg-10 col-md-10 col-sm-10 col-xs-8">
+				<div id="the-basics">
+				  <input class="typeahead" id="search" type="text" placeholder="States of USA">
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-4 pull-right">
+				<button type="button" class="btn btn-ku">Search</button>
+			</div>
+		</div>
+		<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+			<ul id="nav" class="nav navbar-nav">
+					<li class="current"><a href="#body">Home</a></li>
+					<li><a href="#features">Features</a></li>
+					<li><a href="#works">Work</a></li>
+					<li><a href="#team">Team</a></li>
+					<li><a href="#contact">Contact</a></li>
+				</ul>
 		</div>
 	</header>
 	<!--        End Fixed Navigation
@@ -121,7 +148,7 @@
         ==================================== -->
 	<section id="works" class="works clearfix">
 		<div class="project-wrapper">
-			<div class="container">
+			<div class="container" style="padding-top:600px;">
 				<%@ include file="/common/messages.jsp"%>
 				<div class="row mb50" id="main-content">
 					<decorator:body />
@@ -175,8 +202,56 @@
 	<a href="javascript:void(0);" id="back-top"><i
 		class="fa fa-angle-up fa-3x"></i></a>
 </body>
+<script type="text/javascript">
+
+/* var bestPictures = new Bloodhound({
+	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+	  queryTokenizer: Bloodhound.tokenizers.whitespace,
+	  remote: {
+	    url: '/get/searchSuggest?query=%QUERY',
+	    wildcard: '%QUERY'
+	  }
+	});
+
+	$('#search').typeahead(null, {
+	  name: 'best-pictures',
+	  display: 'value',
+	  source: bestPictures
+	}); */
+	
+		 $('#search').typeahead({
+	  hint: true,
+	  highlight: true,
+	  minLength: 1
+	},
+	{
+	  name: 'states',
+	  source: function (query, process) {
+		   return $.ajax({
+	            url: "/get/searchSuggest",
+	            dataType: "json",
+	            type: "GET",
+	            data: 'query=' + query,
+	            success: function (data) {
+	            	var myJsonString = JSON.stringify(data);
+	            	var states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
+	            	              'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
+	            	              'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
+	            	              'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
+	            	              'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+	            	              'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
+	            	              'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
+	            	              'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+	            	              'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+	            	            ];
+	            	process(myJsonString);
+	            }
+		  });
+	    }
+	}); 
+</script>
 <!-- Essential jQuery Plugins
 ================================================== -->
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku-post.js"></script>
+<%-- <script type="text/javascript"
+	src="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku-post.js"></script> --%>
 </html>

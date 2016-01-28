@@ -14,7 +14,7 @@
         <js>/scripts/core/bootstrap-datetimepicker.min.js</js>
         <js>/scripts/script.js</js>
     </group>
-    <group name="ku-pre">
+    <group name="ku">
     	<!-- Fontawesome Icon font -->
         <css>/styles/core/font-awesome.min.css</css>
 		<!-- Twitter Bootstrap css -->

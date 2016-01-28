@@ -96,6 +96,9 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 					&& !offerMap.get("end").equalsIgnoreCase("Deal of the day")
 					&& !offerMap.get("end").equalsIgnoreCase("Stock till last")
 					&& !offerMap.get("end").equalsIgnoreCase("till stock last")
+					&& !offerMap.get("end").equalsIgnoreCase("Stalk till last")
+					&& !offerMap.get("end").equalsIgnoreCase("Stock Last")
+					&& !offerMap.get("end").equalsIgnoreCase("Stock lasts")
 					&& !offerMap.get("end").equalsIgnoreCase("Limited period")
 					&& !offerMap.get("end").equalsIgnoreCase("L.P")
 					&& !offerMap.get("end").contains("Every ")
@@ -138,6 +141,9 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 					offerExpire
 							.set(Calendar.DAY_OF_MONTH, offerExpire
 									.getActualMaximum(Calendar.DAY_OF_MONTH));
+					offerExpire.set(offerExpire.get(Calendar.YEAR),
+							offerExpire.get(Calendar.MONTH),
+							offerExpire.get(Calendar.DATE), 23, 59, 59);
 					offer.setOfferEnd(offerExpire);
 				} else {
 					String[] endDate = end.split(" ");
@@ -205,6 +211,9 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 						offerEnd.setDate(day);
 						offerEnd.setMonth(date.getMonth());
 						offerExpire.setTime(offerEnd);
+						offerExpire.set(offerExpire.get(Calendar.YEAR),
+								offerExpire.get(Calendar.MONTH),
+								offerExpire.get(Calendar.DATE), 23, 59, 59);
 						offer.setOfferEnd(offerExpire);
 					}
 				}
@@ -403,7 +412,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 							}
 						}
 
-						if(StringUtil.isEmptyString(line.trim()) && (dll.getTail().getElement().contains("Offer*:")
+						if(StringUtil.isEmptyString(line) && dll.getTail() != null &&(dll.getTail().getElement().contains("Offer*:")
 								|| dll.getTail().getElement().contains("Offer* :")
 								|| dll.getTail().getElement().contains("Offer:")
 								|| dll.getTail().getElement().contains("Offer :"))){
@@ -551,9 +560,11 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 		params.put("headers", headers);
 		try {
 			String dotdResponse = ApiUtil.getFlipkartData("https://affiliate-api.flipkart.net/affiliate/offers/v1/dotd/json", params);
-			offerManager.saveOffers(processFlipkartResponse(dotdResponse));
+			offerManager.saveOffers(processFlipkartResponse(dotdResponse, "dotdList"));
 			String topResponse = ApiUtil.getFlipkartData("https://affiliate-api.flipkart.net/affiliate/offers/v1/top/json", params);
-			offerManager.saveOffers(processFlipkartResponse(topResponse));
+			offerManager.saveOffers(processFlipkartResponse(topResponse, "topOffersList"));
+			String allResponse = ApiUtil.getFlipkartData("https://affiliate-api.flipkart.net/affiliate/offers/v1/all/json", params);
+			offerManager.saveOffers(processFlipkartResponse(allResponse, "allOffersList"));
 		} catch (IOException e) {
 			throw new KUException(e.getMessage(), e);
 		} catch (org.json.simple.parser.ParseException e) {
@@ -562,57 +573,102 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 		return true;
 	}
 	
-	private List<Offer> processFlipkartResponse(String response) throws KUException, IOException, org.json.simple.parser.ParseException{
+	private List<Offer> processFlipkartResponse(String response, String key) throws KUException, IOException, org.json.simple.parser.ParseException{
 		JSONParser parser = new JSONParser();
 		JSONObject offersJson = (JSONObject) parser.parse(response);
-		System.out.println("jsonnnnnnnnnnn ========= " + offersJson);
-		JSONArray deals = (JSONArray) offersJson.get("dotdList");
+		//System.out.println("jsonnnnnnnnnnn ========= " + offersJson);
+		JSONArray deals = (JSONArray) offersJson.get(key);
 		List<Offer> offers = new ArrayList<Offer>();
-		for (int i = 0 ; i < deals.size(); i++) {
-			JSONObject offerJson = (JSONObject)deals.get(i);
-			Offer offer = new Offer();
-			offer.setOfferTitle(offerJson.get("title").toString());
-			offer.setDescription(offerJson.get("description").toString());
-			offer.setTargetURL(offerJson.get("url").toString());
-			if(!StringUtil.isEmptyString(offerJson.get("imageUrls"))) {
-				JSONArray images = (JSONArray)offerJson.get("imageUrls");
-				for (int j = 0 ; j < images.size(); j++) {
-					JSONObject image = (JSONObject)images.get(j);
-					if(StringUtil.isEmptyString(image.get("url"))) {
-						continue;
-					} else {
-						String uploadDir = servletContext.getRealPath("/files");
-						File f = new File(uploadDir);
-						boolean isImagesPath = false;
-						if(!f.exists()) {
-							uploadDir = servletContext.getRealPath("/images");
-							isImagesPath = true;
-						}
-						String path = Constants.FILE_SEP
-								+ "offers"
-								+ Constants.FILE_SEP
-								+ "flipkart"
-								+ Constants.FILE_SEP;
-						f = new File(uploadDir);
-						if(!f.exists()) {
-							f.mkdirs();
-						}
-						path += offer.getOfferTitle().replaceAll(" ", "-").replaceAll("%", "-percent")
-								+".jpg";
-						ApiUtil.saveImageFromUrl(image.get("url").toString(), uploadDir+path);
-						if(isImagesPath){
-							offer.setImagePath("/images"+Constants.FILE_SEP+path);
+		if(deals != null){
+			for (int i = 0 ; i < deals.size(); i++) {
+				JSONObject offerJson = (JSONObject)deals.get(i);
+				Offer offer = new Offer();
+				offer.setOfferTitle(offerJson.get("title").toString());
+				offer.setDescription(offerJson.get("description").toString());
+				offer.setTargetURL(offerJson.get("url").toString());
+				
+				if(!StringUtil.isEmptyString(offerJson.get("startTime"))){
+					Calendar offerEnd = new GregorianCalendar();
+					offerEnd.setTimeInMillis(Long.parseLong(offerJson.get("startTime").toString()));
+					offer.setOfferStart(offerEnd);
+				}
+				
+				if(!StringUtil.isEmptyString(offerJson.get("endTime"))){
+					Calendar offerEnd = new GregorianCalendar();
+					offerEnd.setTimeInMillis(Long.parseLong(offerJson.get("endTime").toString()));
+					offer.setOfferEnd(offerEnd);
+				}
+				
+				if(!StringUtil.isEmptyString(offerJson.get("imageUrls"))) {
+					JSONArray images = (JSONArray)offerJson.get("imageUrls");
+					for (int j = 0 ; j < images.size(); j++) {
+						JSONObject image = (JSONObject)images.get(j);
+						if(StringUtil.isEmptyString(image.get("url"))) {
+							continue;
 						} else {
-							offer.setImagePath("/files"+Constants.FILE_SEP+path);
+							String uploadDir = servletContext.getRealPath("/files");
+							File f = null;
+							boolean isImagesPath = false;
+							if(uploadDir != null) {
+								f = new File(uploadDir);
+							}
+							if(uploadDir == null || !f.exists()) {
+								uploadDir = servletContext.getRealPath("/images");
+								isImagesPath = true;
+							}
+							Calendar date = new GregorianCalendar();
+							SimpleDateFormat sdf = new SimpleDateFormat("MMMM-yyyy");
+							String dateStr = sdf.format(date.getTime());
+							String path = Constants.FILE_SEP
+									+ "offers"
+									+ Constants.FILE_SEP
+									+ dateStr
+									+ Constants.FILE_SEP
+									+ "flipkart"
+									+ Constants.FILE_SEP;
+							f = new File(uploadDir+path);
+							if(!f.exists()) {
+								f.mkdirs();
+							}
+							if(!StringUtil.isEmptyString(offerJson.get("description"))) {
+								String description = offerJson.get("description").toString()
+										.replaceAll(" ", "-")
+										.replaceAll("%", "-percent")
+										.replaceAll("'", "")
+										.replaceAll(",", "")
+										.replaceAll("&", "")
+										.replaceAll("#", "")
+										.replaceAll("/", "");
+								if(description.length() > 100){
+									description = description.substring(0, 100);
+								}
+								String title = offer.getOfferTitle()
+										.replaceAll(" ", "-")
+										.replaceAll("%", "-percent")
+										.replaceAll("/", ""); 
+								path +=  title + description + ".jpg";
+							} else {
+								path += offer.getOfferTitle()
+										.replaceAll(" ", "-")
+										.replaceAll("%", "-percent")
+										.replaceAll("/", "")
+										+ ".jpg";
+							}
+							ApiUtil.saveImageFromUrl(image.get("url").toString(), uploadDir+path);
+							if(isImagesPath){
+								offer.setImagePath("/images"+Constants.FILE_SEP+path);
+							} else {
+								offer.setImagePath("/files"+Constants.FILE_SEP+path);
+							}
+							break;
 						}
-						break;
 					}
 				}
+				offer.setLabelsString("flipkart, offers, deals, coupons");
+				offer.setMerchantName("flipkart");
+				offer.setSource("flipkart");
+				offers.add(offer);
 			}
-			offer.setLabelsString("flipkart, offers, deals, coupons");
-			offer.setMerchantName("flipkart");
-			offer.setSource("flipkart");
-			offers.add(offer);
 		}
 		return offers;
 	}

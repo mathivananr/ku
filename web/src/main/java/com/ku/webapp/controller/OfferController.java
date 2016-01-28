@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ku.Constants;
 import com.ku.common.KUException;
 import com.ku.model.Offer;
 import com.ku.model.OfferLabel;
@@ -163,13 +164,22 @@ public class OfferController extends BaseFormController {
 			}
 		}
 		if(!StringUtil.isEmptyString(pageNo)) {
-			int endLimit = Integer.parseInt(pageNo) * 250;
-			int startLimit = endLimit - 250;
-			String content = offerManager.getOffersContent(labels, startLimit , 250); 
+			int endLimit = Integer.parseInt(pageNo) * Constants.OFFER_TO_LOAD;
+			int startLimit = endLimit - Constants.OFFER_TO_LOAD;
+			String content = offerManager.getOffersContent(labels, startLimit , Constants.OFFER_TO_LOAD); 
 			return content;
 		} else {
 			return "";
 		}
+	}
+	
+	@RequestMapping(value = "/get/searchSuggest", method = RequestMethod.GET, produces = "application/json")
+	public @ResponseBody List<String> searchSuggest(final HttpServletRequest request,
+			final HttpServletResponse response,
+			@RequestParam("query") String label)
+			throws KUException {
+		log.info("getting labels for :: " + label);
+		return offerManager.getSuggestLabels(label);
 	}
 	
 	@RequestMapping(value = "/pullFlipkart", method = RequestMethod.GET)
@@ -197,8 +207,9 @@ public class OfferController extends BaseFormController {
 		//label = label.replaceAll("-", " ");
 		Model model = new ExtendedModelMap();
 		model.addAttribute("label", label);
+		model.addAttribute("pageNo", 2);
 		model.addAttribute("activeMenu", "offer-link");
-		model.addAttribute("offers", offerManager.getOffersByLabels(labels, 0 , 250));
+		model.addAttribute("offers", offerManager.getOffersByLabels(labels, 0 , Constants.OFFER_TO_LOAD));
 		Date now = new Date();
 		SimpleDateFormat dt1 = new SimpleDateFormat("MMMMM d yyyy");
 		String title = (label.contains("offer") || label.contains("coupon") || label.contains("deal") ? label.replace("-", " ") : label.replace("-", " ") + " offers, deals, coupons ") + " - "+dt1.format(now);

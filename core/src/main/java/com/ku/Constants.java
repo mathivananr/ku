@@ -166,4 +166,6 @@ public final class Constants {
 	public static final String APP_META_DESCRIPTION = "appMetaDescription";
 	
 	public static final String DEFAULT_SCHEDULER_GROUP = "ku";
+	
+	public static final int OFFER_TO_LOAD = 250;
 }

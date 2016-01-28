@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.ku.Constants;
 import com.ku.common.KUException;
 import com.ku.model.Offer;
 import com.ku.service.OfferManager;
@@ -36,8 +37,9 @@ public class HomeController extends BaseFormController {
 		model.addAttribute("metaKeywords", "");
 		model.addAttribute("metaDescription", "");
 		model.addAttribute("label", "");
+		model.addAttribute("pageNo", 2);
 		try {
-			model.addAttribute("offers", offerManager.getOffersByLabels(new ArrayList<String>(), 0 , 250));
+			model.addAttribute("offers", offerManager.getOffersByLabels(new ArrayList<String>(), 0 , Constants.OFFER_TO_LOAD));
 		} catch(KUException e) {
 			log.error(e.getMessage(), e);
 			model.addAttribute("offers", new ArrayList<Offer>());

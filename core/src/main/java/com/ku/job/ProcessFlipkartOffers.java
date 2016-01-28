@@ -23,11 +23,11 @@ import com.ku.service.EmailOfferProcessor;
  */
 @DisallowConcurrentExecution
 public class ProcessFlipkartOffers implements Job {
-	private Log log = LogFactory.getLog(com.ku.job.ProcessPayoomOffers.class);
+	private Log log = LogFactory.getLog(com.ku.job.ProcessFlipkartOffers.class);
 
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		log.info("payoom email offer processor");
+		log.info("flipkart offer processor");
 		ApplicationContext springContext = WebApplicationContextUtils
 				.getWebApplicationContext(ContextLoaderListener
 						.getCurrentWebApplicationContext().getServletContext());

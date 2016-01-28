@@ -2,7 +2,7 @@
 <% pageContext.setAttribute("newLine", "\n"); %>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 	<input type="hidden" id="label" value="${label}"/>
-	<input type="hidden" id="pageNo" value=1 />
+	<input type="hidden" id="pageNo" value="${pageNo}" />
 	<div class="well">
 		<div class="row row-nomargin">
 			<h1><p class="theme-color">${label}</p></h1>
@@ -16,10 +16,10 @@
 						<div id="offer-image" class="offer-image">
 							<c:choose>
 							  <c:when test="${not empty offer.imagePath}">
-							    <div class="text-center"><a href="${offer.targetURL}" ><img class="col-lg-12 col-md-12 col-sm-10 col-xs-10" alt="${offer.merchantName}" src="${offer.imagePath}"></a></div>
+							    <div class="text-center"><a href="${offer.targetURL}" ><img style="max-height: 100;" class="col-lg-12 col-md-12 col-sm-10 col-xs-10" alt="${offer.merchantName}" src="${offer.imagePath}"></a></div>
 							  </c:when>
 							  <c:when test="${not empty offer.merchantLogoPath}">
-							    <div class="text-center"><a href="${offer.targetURL}" ><img class="col-lg-12 col-md-12 col-sm-10 col-xs-10" alt="${offer.merchantName}" src="${offer.merchantLogoPath}"></a></div>
+							    <div class="text-center"><a href="${offer.merchantLogoPath}" ><img class="col-lg-12 col-md-12 col-sm-10 col-xs-10" alt="${offer.merchantName}" src="${offer.merchantLogoPath}"></a></div>
 							  </c:when>
 							  <c:otherwise>
 							    <div class="text-center"><p class="col-lg-10 col-md-10 col-sm-12 col-xs-12 offer-image-merchant-name">${offer.merchantName}</p></div>
@@ -63,7 +63,7 @@
 						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 								<c:forEach var="offerLabel" items="${offer.labels}">
 									<c:if test="${offerLabel.hidden == false}">
-										<span><a href="${fn:replace(offerLabel.label, ' ', '-')}" title="${offerLabel.label}" class="label label-info text-capitalize">${offerLabel.label}</a></span>
+										<span><a href="/${fn:replace(offerLabel.label, ' ', '-')}/" title="${offerLabel.label}" class="label label-info text-capitalize">${offerLabel.label}</a></span>
 									</c:if>
 								</c:forEach>
 						</div>
@@ -75,7 +75,7 @@
 	</div>
 	<div id="loadOffers" class="ajax-load-more lazyLoader">
 		<div class="btn-load-more btn-loadmore" data-pageno="1">
-			<p align="center"><button id="loadMore" class="btn btn-default">Load More Offers</button></p>
+		  	<p align="center"><a href="#!/${pageNo}" id="loadMore" class="btn btn-default">Load More Offers</a></p>
 		</div>
 	</div>
 </div>
