@@ -52,8 +52,9 @@ public class OfferController extends BaseFormController {
 
 	@RequestMapping(value = "/user/add-coupon", method = RequestMethod.POST)
 	@ModelAttribute
-	public ModelAndView addCoupon(@ModelAttribute("offer") Offer offer, BindingResult errors,
-			final HttpServletRequest request, final HttpServletResponse response) {
+	public ModelAndView addCoupon(@ModelAttribute("offer") Offer offer,
+			BindingResult errors, final HttpServletRequest request,
+			final HttpServletResponse response) {
 		Model model = new ExtendedModelMap();
 		try {
 			log.info("adding coupon :: " + offer.getOfferTitle());
@@ -119,112 +120,204 @@ public class OfferController extends BaseFormController {
 
 	@RequestMapping(value = "/user/edit-label", method = RequestMethod.GET)
 	public ModelAndView showOfferLabelUpdate(final HttpServletRequest request,
-			final HttpServletResponse response){
+			final HttpServletResponse response) {
 		String labelId = request.getParameter("labelId");
 		Model model = new ExtendedModelMap();
 		model.addAttribute("activeMenu", "offer-link");
 		try {
 			model.addAttribute("offerLabel",
-				offerManager.getOfferLabelById(Long.parseLong(labelId)));
-		} catch(KUException e) {
+					offerManager.getOfferLabelById(Long.parseLong(labelId)));
+		} catch (KUException e) {
 			log.error(e.getMessage(), e);
 			model.addAttribute("offerLabel", new Offer());
 			saveError(request, e.getMessage());
 		}
 		return new ModelAndView("/ku/offer-label", model.asMap());
 	}
-	
+
 	@RequestMapping(value = "/user/label-list", method = RequestMethod.GET)
 	public ModelAndView listLabel(final HttpServletRequest request,
-			final HttpServletResponse response){
+			final HttpServletResponse response) {
 		Model model = new ExtendedModelMap();
 		model.addAttribute("activeMenu", "offer-link");
 		try {
-			model.addAttribute("offerLabelList", offerManager.getAllOfferLabels());
-		}catch(KUException e) {
+			model.addAttribute("offerLabelList",
+					offerManager.getAllOfferLabels());
+		} catch (KUException e) {
 			log.error(e.getMessage(), e);
 			model.addAttribute("offerLabelList", new ArrayList<OfferLabel>());
 			saveError(request, e.getMessage());
 		}
 		return new ModelAndView("/ku/offer-label-list", model.asMap());
 	}
-	
+
 	@RequestMapping(value = "/get/offers", method = RequestMethod.GET)
-	public @ResponseBody String getOffers(final HttpServletRequest request,
+	public @ResponseBody
+	String getOffers(final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RequestParam("label") String label, @RequestParam("pageNo") String pageNo)
-			throws KUException {
+			@RequestParam("label") String label,
+			@RequestParam("pageNo") String pageNo) throws KUException {
 		log.info("getting offers for :: " + label);
 		List<String> labels = new ArrayList<String>();
-		if(!StringUtil.isEmptyString(label)){
-			if(label.contains("-")){
+		if (!StringUtil.isEmptyString(label)) {
+			if (label.contains("-")) {
 				labels.addAll(Arrays.asList(label.split("-")));
 			} else {
 				labels.add(label);
 			}
 		}
-		if(!StringUtil.isEmptyString(pageNo)) {
+		if (!StringUtil.isEmptyString(pageNo)) {
 			int endLimit = Integer.parseInt(pageNo) * Constants.OFFER_TO_LOAD;
 			int startLimit = endLimit - Constants.OFFER_TO_LOAD;
-			String content = offerManager.getOffersContent(labels, startLimit , Constants.OFFER_TO_LOAD); 
+			String content = offerManager.getOffersContent(labels, startLimit,
+					Constants.OFFER_TO_LOAD);
 			return content;
 		} else {
 			return "";
 		}
 	}
-	
+
 	@RequestMapping(value = "/get/searchSuggest", method = RequestMethod.GET, produces = "application/json")
-	public @ResponseBody List<String> searchSuggest(final HttpServletRequest request,
+	public @ResponseBody
+	List<String> searchSuggest(final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RequestParam("query") String label)
-			throws KUException {
+			@RequestParam("query") String label) throws KUException {
 		log.info("getting labels for :: " + label);
 		return offerManager.getSuggestLabels(label);
 	}
-	
+
 	@RequestMapping(value = "/pullFlipkart", method = RequestMethod.GET)
-	public @ResponseBody String pullFlipkart(final HttpServletRequest request,
-			final HttpServletResponse response) throws KUException, ParseException, IOException {
+	public @ResponseBody
+	String pullFlipkart(final HttpServletRequest request,
+			final HttpServletResponse response) throws KUException,
+			ParseException, IOException {
 		log.info("pull flipkart");
-		//offerManager.pullFlipkartOffers();
+		// offerManager.pullFlipkartOffers();
 		return "success";
 	}
-	
-	@RequestMapping(value = "/{label}", method = RequestMethod.GET)
-	public ModelAndView showOffers(final HttpServletRequest request,
+
+	@RequestMapping(value = "/page/{pageNo}", method = RequestMethod.GET)
+	public ModelAndView showOffersPage(final HttpServletRequest request,
 			final HttpServletResponse response,
-			@PathVariable("label") String label)
-			throws KUException {
-		log.info("getting offers for :: " + label);
+			@PathVariable("pageNo") String pageNo) throws KUException {
+		log.info("getting offers for :: page no " + pageNo);
 		List<String> labels = new ArrayList<String>();
-		if(!StringUtil.isEmptyString(label)){
-			if(label.contains("-")){
+		
+		// label = label.replaceAll("-", " ");
+		Model model = new ExtendedModelMap();
+		model.addAttribute("label", "");
+		model.addAttribute("pageNo", pageNo);
+		model.addAttribute("activeMenu", "offer-link");
+		if (!StringUtil.isEmptyString(pageNo)) {
+			int endLimit = Integer.parseInt(pageNo) * Constants.OFFER_TO_LOAD;
+			int startLimit = endLimit - Constants.OFFER_TO_LOAD;
+			model.addAttribute("offers", offerManager.getOffersByLabels(labels,
+					startLimit, Constants.OFFER_TO_LOAD));
+		}
+		return new ModelAndView("/ku/offers", model.asMap());
+	}
+	
+	@RequestMapping(value = "/{label}/page/{pageNo}", method = RequestMethod.GET)
+	public ModelAndView showOffersforLabel(final HttpServletRequest request,
+			final HttpServletResponse response,
+			@PathVariable("label") String label,
+			@PathVariable("pageNo") String pageNo) throws KUException {
+		log.info("getting offers for :: " + label + " and page no " + pageNo);
+		List<String> labels = new ArrayList<String>();
+		if (!StringUtil.isEmptyString(label)) {
+			if (label.contains("-")) {
 				labels.addAll(Arrays.asList(label.split("-")));
 			} else {
 				labels.add(label);
 			}
 		}
-		//label = label.replaceAll("-", " ");
+		// label = label.replaceAll("-", " ");
 		Model model = new ExtendedModelMap();
 		model.addAttribute("label", label);
-		model.addAttribute("pageNo", 2);
+		model.addAttribute("pageNo", pageNo);
 		model.addAttribute("activeMenu", "offer-link");
-		model.addAttribute("offers", offerManager.getOffersByLabels(labels, 0 , Constants.OFFER_TO_LOAD));
+		if (!StringUtil.isEmptyString(pageNo)) {
+			int endLimit = Integer.parseInt(pageNo) * Constants.OFFER_TO_LOAD;
+			int startLimit = endLimit - Constants.OFFER_TO_LOAD;
+			model.addAttribute("offers", offerManager.getOffersByLabels(labels,
+					startLimit, Constants.OFFER_TO_LOAD));
+		}
 		Date now = new Date();
 		SimpleDateFormat dt1 = new SimpleDateFormat("MMMMM d yyyy");
-		String title = (label.contains("offer") || label.contains("coupon") || label.contains("deal") ? label.replace("-", " ") : label.replace("-", " ") + " offers, deals, coupons ") + " - "+dt1.format(now);
+		String title = (label.contains("offer") || label.contains("coupon")
+				|| label.contains("deal") ? label.replace("-", " ") : label
+				.replace("-", " ") + " offers, deals, coupons ")
+				+ " - " + dt1.format(now);
 		model.addAttribute("pageTitle", title);
 		String keywords = label;
 		label = label.replaceAll("-", " ");
-		if(!label.contains("offer") && !label.contains("coupon") && !label.contains("deal")){
-			keywords += ", "+label+" offer, "+label+" coupon, "+label+",  latest "+label+" offers, best "+label+" deals, new "+label +" coupons, today "+label+" offers";
+		if (!label.contains("offer") && !label.contains("coupon")
+				&& !label.contains("deal")) {
+			keywords += ", " + label + " offer, " + label + " coupon, " + label
+					+ ",  latest " + label + " offers, best " + label
+					+ " deals, new " + label + " coupons, today " + label
+					+ " offers";
 		} else {
-			keywords += ", latest "+label+", best "+label+", new "+label+", today "+label;
+			keywords += ", latest " + label + ", best " + label + ", new "
+					+ label + ", today " + label;
 		}
 		model.addAttribute("metaKeywords", keywords);
-		String description = " find latest "+ (label.contains("offer") || label.contains("coupon") || label.contains("deal") ? label.replace("-", " ") : label.replace("-", " ") + " offers, deals, coupons ")+" which is verfied and updated frequently";
-		model.addAttribute("metaDescription", description );
+		String description = " find latest "
+				+ (label.contains("offer") || label.contains("coupon")
+						|| label.contains("deal") ? label.replace("-", " ")
+						: label.replace("-", " ") + " offers, deals, coupons ")
+				+ " which is verfied and updated frequently";
+		model.addAttribute("metaDescription", description);
 		return new ModelAndView("/ku/offers", model.asMap());
 	}
-	
+
+	@RequestMapping(value = "/{label}", method = RequestMethod.GET)
+	public ModelAndView showOffers(final HttpServletRequest request,
+			final HttpServletResponse response,
+			@PathVariable("label") String label) throws KUException {
+		log.info("getting offers for :: " + label);
+		List<String> labels = new ArrayList<String>();
+		if (!StringUtil.isEmptyString(label)) {
+			if (label.contains("-")) {
+				labels.addAll(Arrays.asList(label.split("-")));
+			} else {
+				labels.add(label);
+			}
+		}
+		// label = label.replaceAll("-", " ");
+		Model model = new ExtendedModelMap();
+		model.addAttribute("label", label);
+		model.addAttribute("pageNo", 1);
+		model.addAttribute("activeMenu", "offer-link");
+		model.addAttribute("offers", offerManager.getOffersByLabels(labels, 0,
+				Constants.OFFER_TO_LOAD));
+		Date now = new Date();
+		SimpleDateFormat dt1 = new SimpleDateFormat("MMMMM d yyyy");
+		String title = (label.contains("offer") || label.contains("coupon")
+				|| label.contains("deal") ? label.replace("-", " ") : label
+				.replace("-", " ") + " offers, deals, coupons ")
+				+ " - " + dt1.format(now);
+		model.addAttribute("pageTitle", title);
+		String keywords = label;
+		label = label.replaceAll("-", " ");
+		if (!label.contains("offer") && !label.contains("coupon")
+				&& !label.contains("deal")) {
+			keywords += ", " + label + " offer, " + label + " coupon, " + label
+					+ ",  latest " + label + " offers, best " + label
+					+ " deals, new " + label + " coupons, today " + label
+					+ " offers";
+		} else {
+			keywords += ", latest " + label + ", best " + label + ", new "
+					+ label + ", today " + label;
+		}
+		model.addAttribute("metaKeywords", keywords);
+		String description = " find latest "
+				+ (label.contains("offer") || label.contains("coupon")
+						|| label.contains("deal") ? label.replace("-", " ")
+						: label.replace("-", " ") + " offers, deals, coupons ")
+				+ " which is verfied and updated frequently";
+		model.addAttribute("metaDescription", description);
+		return new ModelAndView("/ku/offers", model.asMap());
+	}
+
 }

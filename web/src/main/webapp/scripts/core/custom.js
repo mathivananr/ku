@@ -6,6 +6,128 @@ jQuery(window).load(function() {
 	$("#preloader").fadeOut("slow");
 });
 
+$(window).scroll(function(){
+	if(!$("#navigation").hasClass("navbar-fixed-top")){
+		$("#navigation").addClass("navbar-fixed-top");
+	}
+	
+	if($(window).scrollTop() == 0) {
+		$("#navigation").removeClass("navbar-fixed-top");
+	}
+	
+	if($(window).scrollTop() >= $('#offers-container').offset().top + $('#offers-container').outerHeight() - window.innerHeight && $("#scrollReached").val() == "false") {
+        $("#scrollReached").val("true");
+        loadMoreOffers();
+    }
+	
+});
+
+(function () {
+    $(function () {
+        var SideBAR;
+        SideBAR = (function () {
+            function SideBAR() {}
+
+            SideBAR.prototype.expandMyMenu = function () {
+            	$("#side-menu").removeClass("hide");
+            	$("nav.sidebar").addClass("side-menu");
+                return $("nav.sidebar").removeClass("sidebar-menu-collapsed").addClass("sidebar-menu-expanded");
+            };
+
+            SideBAR.prototype.collapseMyMenu = function () {
+            	$("#side-menu").addClass("hide");
+            	$("nav.sidebar").removeClass("side-menu");
+                return $("nav.sidebar").removeClass("sidebar-menu-expanded").addClass("sidebar-menu-collapsed");
+            };
+
+            SideBAR.prototype.showMenuTexts = function () {
+                return $("nav.sidebar ul a span.expanded-element").show();
+            };
+
+            SideBAR.prototype.hideMenuTexts = function () {
+                return $("nav.sidebar ul a span.expanded-element").hide();
+            };
+
+            SideBAR.prototype.showActiveSubMenu = function () {
+                $("li.active ul.level2").show();
+                return $("li.active a.expandable").css({
+                    width: "100%"
+                });
+            };
+
+            SideBAR.prototype.hideActiveSubMenu = function () {
+                return $("li.active ul.level2").hide();
+            };
+
+            SideBAR.prototype.adjustPaddingOnExpand = function () {
+                $("ul.level1 li a.expandable").css({
+                    padding: "1px 4px 4px 0px"
+                });
+                return $("ul.level1 li.active a.expandable").css({
+                    padding: "1px 4px 4px 4px"
+                });
+            };
+
+            SideBAR.prototype.resetOriginalPaddingOnCollapse = function () {
+                $("ul.nbs-level1 li a.expandable").css({
+                    padding: "4px 4px 4px 0px"
+                });
+                return $("ul.level1 li.active a.expandable").css({
+                    padding: "4px"
+                });
+            };
+
+            SideBAR.prototype.ignite = function () {
+                return (function (instance) {
+                    return $("#justify-icon").click(function (e) {
+                        if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-collapsed")) {
+                            instance.adjustPaddingOnExpand();
+                            instance.expandMyMenu();
+                            instance.showMenuTexts();
+                            instance.showActiveSubMenu();
+                            $(this).css({
+                                color: "#FFF"
+                            });
+                        } else if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-expanded")) {
+                            instance.resetOriginalPaddingOnCollapse();
+                            instance.collapseMyMenu();
+                            instance.hideMenuTexts();
+                            instance.hideActiveSubMenu();
+                            $(this).css({
+                                color: "#0EB493"
+                            });
+                        }
+                        return false;
+                    });
+                })(this);
+            };
+
+            return SideBAR;
+
+        })();
+        return (new SideBAR).ignite();
+    });
+
+}).call(this);
+
+$(window).bind("load", function() {
+    $.each(document.images, function(){
+               var this_image = this;
+               var src = $(this_image).attr('src') || '' ;
+               if(!src.length > 0){
+                   //this_image.src = options.loading; // show loading
+                   var lsrc = $(this_image).attr('data-src') || '' ;
+                   if(lsrc.length > 0){
+                       var img = new Image();
+                       img.src = lsrc;
+                       $(img).load(function() {
+                           this_image.src = this.src;
+                       });
+                   }
+               }
+           });
+  });
+
 /*$(document)
 		.ready(
 				function() {
@@ -170,32 +292,36 @@ $('a').click(
 		}
 });
 
+function loadMoreOffers() {
+	var label = $("#label").val();
+	var pageNo = $("#pageNo").val();
+	var nextPageNo = 2;
+	if(pageNo > 2){
+		nextPageNo = parseInt(pageNo) + 1;
+	}
+	$.ajax({
+		type : "GET",
+		url : "/get/offers",
+		data : "label=" + label + "&pageNo=" + nextPageNo,
+		success : function(response) {
+			if(response.length > 0){
+				nextPageNo = parseInt(pageNo) + 1;
+				$("#pageNo").val(nextPageNo);
+				$("#offersList").append(response);
+				$('#loadMore').attr('href','#!/'+nextPageNo);
+				$("#scrollReached").val("false");
+			} else {
+				$("#loadOffers").html('<p align="center"><button id="noOffer" class="btn btn-default">No more offers available.</button></p>');
+			}
+			//console.log("success");
+		},
+		error : function(e) {
+			//console.log('Error: ' + e);
+		}
+	});
+}
+
 $('#loadMore').click(
 		function(e) {
-			var label = $("#label").val();
-			var pageNo = $("#pageNo").val();
-			var nextPageNo = 2;
-			if(pageNo > 2){
-				nextPageNo = parseInt(pageNo) + 1;
-			}
-			$.ajax({
-				type : "GET",
-				url : "/get/offers",
-				data : "label=" + label + "&pageNo=" + nextPageNo,
-				success : function(response) {
-					if(response.length > 0){
-						nextPageNo = parseInt(pageNo) + 1;
-						$("#pageNo").val(nextPageNo);
-						$("#offersList").append(response);
-						$('#loadMore').attr('href','#!/'+nextPageNo);
-						
-					} else {
-						$("#loadOffers").html('<p align="center"><button id="noOffer" class="btn btn-default">No more offers available.</button></p>');
-					}
-					//console.log("success");
-				},
-				error : function(e) {
-					//console.log('Error: ' + e);
-				}
-			});
+			loadMoreOffers();
 });

@@ -1,10 +1,5 @@
 package com.ku.webapp.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -13,7 +8,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ExtendedModelMap;
@@ -166,68 +160,30 @@ public class MerchantController extends BaseFormController {
 	public ModelAndView saveMerchant(Merchant merchant, BindingResult errors,
 			HttpServletRequest request) {
 		Model model = new ExtendedModelMap();
-		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-		CommonsMultipartFile file = (CommonsMultipartFile) multipartRequest
-				.getFile("file");
-		if (file != null && !file.isEmpty()) {
-			// the directory to upload to
+		try {
+			MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+			CommonsMultipartFile file = (CommonsMultipartFile) multipartRequest
+					.getFile("file");
+			Calendar now = new GregorianCalendar();
+			if (StringUtil.isEmptyString(merchant.getMerchantId())) {
+				merchant.setCreatedOn(now);
+			}
+			merchant.setUpdatedOn(now);
 			String uploadDir = getServletContext().getRealPath("/files");
-			uploadDir += Constants.FILE_SEP
-					+ "merchant"
-					+ Constants.FILE_SEP
-					+ "logo"
-					+ Constants.FILE_SEP;
-			// Create the directory if it doesn't exist
-			File dirPath = new File(uploadDir);
-			if (!dirPath.exists()) {
-				dirPath.mkdirs();
+			if(StringUtil.isEmptyString(uploadDir)) {
+				uploadDir = getServletContext().getRealPath("/images");
 			}
-			// retrieve the file data
-			InputStream stream;
-			try {
-				stream = file.getInputStream();
-				// write the file to the file specified
-				OutputStream bos = new FileOutputStream(
-						uploadDir
-								+ merchant.getMerchantName().replaceAll(" ", "-")
-								+ "."
-								+ FilenameUtils.getExtension(file
-										.getOriginalFilename()));
-				int bytesRead;
-				byte[] buffer = new byte[8192];
-				while ((bytesRead = stream.read(buffer, 0, 8192)) != -1) {
-					bos.write(buffer, 0, bytesRead);
-				}
-				bos.close();
-				// close the stream
-				stream.close();
-				String logoPath = Constants.FILE_SEP
-						+ "file"
-						+ Constants.FILE_SEP
-						+ "merchant"
-						+ Constants.FILE_SEP
-						+ "logo"
-						+ Constants.FILE_SEP
-						+ merchant.getMerchantName().replaceAll(" ", "-")
-						+ "."
-						+ FilenameUtils
-								.getExtension(file.getOriginalFilename());
-				merchant.setLogoPath(logoPath);
-			} catch (IOException e) {
-				saveError(request, "problem in saving logo...");
-				return new ModelAndView("/admin/merchantList", model.asMap());
-			}
-
+			merchantManager.saveMerchant(merchant, file, uploadDir);
+			saveMessage(request, "Merchant saved successfully.");
+			model.addAttribute(Constants.MERCHANT_LIST,
+					merchantManager.getAllMerchant());
+			return new ModelAndView("/admin/merchantList", model.asMap());
+		} catch (KUException e) {
+			Set<MerchantType> merchantTypes = new HashSet<MerchantType>(
+					merchantManager.getAllMerchantTypes());
+			model.addAttribute(Constants.MERCHANT_TYPE_LIST, merchantTypes);
+			model.addAttribute(Constants.MERCHANT, merchant);
+			return new ModelAndView("/admin/merchant", model.asMap());
 		}
-		Calendar now = new GregorianCalendar();
-		if (StringUtil.isEmptyString(merchant.getMerchantId())) {
-			merchant.setCreatedOn(now);
-		}
-		merchant.setUpdatedOn(now);
-		merchantManager.saveMerchant(merchant);
-		saveMessage(request, "Merchant saved successfully.");
-		model.addAttribute(Constants.MERCHANT_LIST,
-				merchantManager.getAllMerchant());
-		return new ModelAndView("/admin/merchantList", model.asMap());
 	}
 }

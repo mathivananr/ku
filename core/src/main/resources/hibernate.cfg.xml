@@ -13,6 +13,7 @@
 		<mapping class="com.ku.model.SupportRequest" />
 		<mapping class="com.ku.model.MerchantType" />
 		<mapping class="com.ku.model.Merchant" />
+		<mapping class="com.ku.model.Category" />
 		<mapping class="com.ku.model.Offer" />
 		<mapping class="com.ku.model.OfferLabel" />
 		<mapping class="com.ku.model.AppConfig" />

@@ -31,6 +31,9 @@
         <!-- date time picker -->
         <js>/scripts/core/moment.js</js>
         <js>/scripts/core/bootstrap-datetimepicker.min.js</js>
+        <js>/scripts/core/typeahead.js</js>
+        <!-- <js>/scripts/core/custom.js</js> -->
+		
     </group>
     <group name="ku-post">
         <!-- Custom Functions -->    

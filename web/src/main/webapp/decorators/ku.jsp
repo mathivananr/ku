@@ -52,31 +52,86 @@
 <link rel="icon" href="/images/favicon.ico" />
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku.css" />
+	<link rel="stylesheet" type="text/css"
+	href="${pageContext.request.contextPath}/styles/core/main.css" />
+	
+<link rel="stylesheet" type="text/css"
+	href="${pageContext.request.contextPath}/styles/core/typeahead.css" />
 <!-- Essential jQuery Plugins
 ================================================== -->
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/assets/v/${applicationScope.assetsVersion}/ku.js"></script>
-	<script type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/core/custom.js"></script>
-	<script type='text/javascript' src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/core/custom.js"></script>
+	<!-- <script type='text/javascript' src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script> -->
 </head>
 
 <body id="body">
-	<input type="hidden" id="active-menu" value="${activeMenu}">
+	<input type="hidden" id="active-menu" value="${activeMenu}" />
+	<input type="hidden" id="scrollReached" value="false" />
 	<!-- preloader -->
-	<div id="preloader">
+	<!-- <div id="preloader">
 		<img src="/images/core/preloader.gif" alt="Preloader">
-	</div>
+	</div> -->
 	<!-- end preloader -->
 
 	<!--         Fixed Navigation
         ==================================== -->
-	<header id="navigation" class="navbar-fixed-top navbar">
+    
+
+	<header id="navigation" class="navbar">
 		<!-- <div class="container"> -->
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+		
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+			<nav class='sidebar sidebar-menu-collapsed'> 
+				<a href='javascript void(0);' id='justify-icon'>
+        			<span class='fa fa-bars'></span>
+     			</a>
+				<div id="side-menu" class="side-menu hide">
+			        <ul class='level1'>
+			            <li class='active'> <a class='expandable' href='#' title='Dashboard'>
+			            <span class='glyphicon glyphicon-home collapsed-element'></span>
+			            <span class='expanded-element'>Dashboard</span>
+			          </a>
+			
+			                <ul class='level2'>
+			                    <li> <a href='#' title='Traffic'>Traffic</a>
+			
+			                    </li>
+			                    <li> <a href='#' title='Conversion rate'>Conversion rate</a>
+			
+			                    </li>
+			                    <li> <a href='#' title='Purchases'>Purchases</a>
+			
+			                    </li>
+			                </ul>
+			            </li>
+			            <li> <a class='expandable' href='#' title='APIs'>
+			            <span class='glyphicon glyphicon-wrench collapsed-element'></span>
+			            <span class='expanded-element'>APIs</span>
+			          </a>
+			
+			            </li>
+			            <li> <a class='expandable' href='#' title='Settings'>
+			            <span class='glyphicon glyphicon-cog collapsed-element'></span>
+			            <span class='expanded-element'>Settings</span>
+			          </a>
+			
+			            </li>
+			            <li> <a class='expandable' href='#' title='Account'>
+			            <span class='glyphicon glyphicon-user collapsed-element'></span>
+			            <span class='expanded-element'>Account</span>
+			          </a>
+			            </li>
+			        </ul> 
+			        <a href='#' id='logout-icon' title='Logout'>
+	        			<span class='glyphicon glyphicon-off'></span>
+	      			</a>
+      			</div>
+    		</nav>
 			<a class="navbar-brand" href="${applicationUrl}">
 					<h1 id="logo">
-						<img src="images/core/logo.png" alt="${applicationName}">
+						<%-- <img src="images/core/logo.png" alt="${applicationName}"> --%>
+						LOGO
 					</h1>
 				</a>
 			<%-- <div class="navbar-header">
@@ -121,34 +176,62 @@
 			<!-- main nav -->
 
 		</div>
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-			<div class="col-lg-10 col-md-10 col-sm-10 col-xs-8">
-				<div id="the-basics">
-				  <input class="typeahead" id="search" type="text" placeholder="States of USA">
+		
+		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-10">
+			<div class="dtable hw100">
+				<div class="dtable-cell hw100">
+					<div class="text-center">
+						<div class="row search-row animated fadeInUp">
+							<div class="col-lg-8 col-md-8 col-sm-8 col-xs-10 search-col relative">
+								<i class="icon-docs icon-append"></i> <input type="text"
+									name="search" id="search" class="form-control has-icon"
+									placeholder="Search">
+							</div>
+							<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 search-col">
+								<button class="btn btn-primary btn-search btn-block">
+									<i class="fa fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="col-lg-2 col-md-2 col-sm-2 col-xs-4 pull-right">
-				<button type="button" class="btn btn-ku">Search</button>
-			</div>
 		</div>
+		
+		<!-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div id="the-basics">
+				  <input class="typeahead" id="search" type="text" placeholder="Search">
+				</div>
+			</div>
+		</div> -->
 		<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-			<ul id="nav" class="nav navbar-nav">
+			<div class="dtable hw100">
+				<div class="dtable-cell hw100">
+					<div class="row search-row">
+						<button type="button" class="btn btn-danger pull-right">Create Page</button>
+					</div>
+				</div>
+			</div>
+			<!-- <ul id="nav" class="nav navbar-nav">
 					<li class="current"><a href="#body">Home</a></li>
 					<li><a href="#features">Features</a></li>
 					<li><a href="#works">Work</a></li>
 					<li><a href="#team">Team</a></li>
 					<li><a href="#contact">Contact</a></li>
-				</ul>
+				</ul> -->
 		</div>
 	</header>
+
 	<!--        End Fixed Navigation
         ==================================== -->
 	
 	<!--        Main Content
         ==================================== -->
+    
 	<section id="works" class="works clearfix">
 		<div class="project-wrapper">
-			<div class="container" style="padding-top:600px;">
+			<div class="container" >
 				<%@ include file="/common/messages.jsp"%>
 				<div class="row mb50" id="main-content">
 					<decorator:body />
@@ -204,51 +287,61 @@
 </body>
 <script type="text/javascript">
 
-/* var bestPictures = new Bloodhound({
-	  datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-	  queryTokenizer: Bloodhound.tokenizers.whitespace,
-	  remote: {
-	    url: '/get/searchSuggest?query=%QUERY',
-	    wildcard: '%QUERY'
-	  }
+	// Instantiate the Bloodhound suggestion engine
+	var labeldata = new Bloodhound({
+	    datumTokenizer: function (datum) {
+	        return Bloodhound.tokenizers.whitespace(datum.value);
+	    },
+	    queryTokenizer: Bloodhound.tokenizers.whitespace,
+	    remote: {
+	        url: '/get/searchSuggest?query=%QUERY',
+	        wildcard: '%QUERY',
+	        filter: function (data) {
+	            // Map the remote source JSON array to a JavaScript object array
+	            var labels = JSON.parse(JSON.stringify(data));
+	            return $.map(labels, function (label) {
+	                return {
+	                    value: label
+	                };
+	            });
+	        }
+	    }
 	});
 
+	// Initialize the Bloodhound suggestion engine
+	labeldata.initialize();
+
+	// Instantiate the Typeahead UI
 	$('#search').typeahead(null, {
-	  name: 'best-pictures',
-	  display: 'value',
-	  source: bestPictures
-	}); */
+	    displayKey: 'value',
+	    source: labeldata.ttAdapter()
+	}).on('typeahead:selected', function (obj, datum) {
+		//console.log(datum);
+		//alert(window.location.origin);
+		var link = window.location.origin+"/"+datum.value+"/";
+		window.location.href = link;
+		/* $.ajax({
+			type : "GET",
+			url : "/get/offers",
+			data : "label=" + datum.value + "&pageNo=" + 1,
+			success : function(response) {
+				if(response.length > 0){
+					$("#pageNo").val(1);
+					$("#offersList").html(response);
+					$('#loadMore').attr('href',datum.value+'/#!/'+2);
+					
+				} else {
+					$("#offersList").html("");
+					$("#loadOffers").html('<p align="center"><button id="noOffer" class="btn btn-default">No more offers available.</button></p>');
+				}
+				//console.log("success");
+			},
+			error : function(e) {
+				//console.log('Error: ' + e);
+			}
+		}); */
+	});
 	
-		 $('#search').typeahead({
-	  hint: true,
-	  highlight: true,
-	  minLength: 1
-	},
-	{
-	  name: 'states',
-	  source: function (query, process) {
-		   return $.ajax({
-	            url: "/get/searchSuggest",
-	            dataType: "json",
-	            type: "GET",
-	            data: 'query=' + query,
-	            success: function (data) {
-	            	var myJsonString = JSON.stringify(data);
-	            	var states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California',
-	            	              'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii',
-	            	              'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana',
-	            	              'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota',
-	            	              'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
-	            	              'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota',
-	            	              'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island',
-	            	              'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-	            	              'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
-	            	            ];
-	            	process(myJsonString);
-	            }
-		  });
-	    }
-	}); 
 </script>
 <!-- Essential jQuery Plugins
 ================================================== -->

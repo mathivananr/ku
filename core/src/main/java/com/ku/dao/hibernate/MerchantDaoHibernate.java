@@ -2,6 +2,8 @@ package com.ku.dao.hibernate;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -11,6 +13,8 @@ import com.ku.common.KUException;
 import com.ku.dao.MerchantDao;
 import com.ku.model.Merchant;
 import com.ku.model.MerchantType;
+import com.ku.model.Offer;
+import com.ku.model.OfferLabel;
 
 @Repository("merchantDao")
 public class MerchantDaoHibernate extends GenericDaoHibernate<Merchant, Long>
@@ -169,5 +173,31 @@ public class MerchantDaoHibernate extends GenericDaoHibernate<Merchant, Long>
 						"select merchant from Merchant as merchant where "
 								+ "merchant.merchantType.typeName in :list order by merchant.merchantType.typeOrder")
 				.setParameterList("list", merchantTypes).list();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws KUException
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public OfferLabel getOfferLabelByLabel(String label) throws KUException {
+		List<OfferLabel> offerLabels = getSession()
+				.createCriteria(OfferLabel.class)
+				.add(Restrictions.eq("label", label)).list();
+		if (offerLabels != null && offerLabels.size() > 0) {
+			return offerLabels.get(0);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	public OfferLabel saveOfferLabel(OfferLabel offerLabel) throws KUException {
+		return (OfferLabel) getSession().merge(offerLabel);
 	}
 }

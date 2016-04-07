@@ -24,11 +24,13 @@ public class OfferLabel extends BaseObject implements Serializable {
 	private Long labelId;
 	private String label;
 	private boolean isMerchant;
+	private boolean isCategory;
+	private boolean isProduct;
 	private String metaKeyword;
 	private String metaDescription;
 	private String createdBy;
 	private String updatedBy;
-	private boolean hidden;
+	private boolean isHidden;
 	private Calendar createdOn = new GregorianCalendar();
 	private Calendar updatedOn = new GregorianCalendar();
 	
@@ -68,6 +70,24 @@ public class OfferLabel extends BaseObject implements Serializable {
 
 	public void setIsMerchant(boolean isMerchant) {
 		this.isMerchant = isMerchant;
+	}
+
+	@Column(name = "is_category", columnDefinition = "boolean default false", nullable = false)
+	public boolean getIsCategory() {
+		return isCategory;
+	}
+
+	public void setIsCategory(boolean isCategory) {
+		this.isCategory = isCategory;
+	}
+
+	@Column(name = "is_product", columnDefinition = "boolean default false", nullable = false)
+	public boolean getIsProduct() {
+		return isProduct;
+	}
+
+	public void setIsProduct(boolean isProduct) {
+		this.isProduct = isProduct;
 	}
 
 	@Column(name = "meta_keyword", columnDefinition = "TEXT")
@@ -125,12 +145,12 @@ public class OfferLabel extends BaseObject implements Serializable {
 	}
 
 	@Column(name = "is_hidden", columnDefinition = "boolean default false", nullable = false)
-	public boolean isHidden() {
-		return hidden;
+	public boolean getIsHidden() {
+		return isHidden;
 	}
 
-	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
+	public void setIsHidden(boolean isHidden) {
+		this.isHidden = isHidden;
 	}
 
 	/**

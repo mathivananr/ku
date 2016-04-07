@@ -73,7 +73,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			
 			offer.setMerchantName(offerMap.get("merchant"));
 			offerMap.remove("merchant");
-			System.out.println("   Offer   "+ offerMap.get("Offer"));
+			//System.out.println("   Offer   "+ offerMap.get("Offer"));
 			
 			if (!StringUtil.isEmptyString(offerMap.get("Offer"))) {
 				offer.setOfferTitle(offerMap.get("Offer"));
@@ -89,7 +89,8 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			offer.setLabelsString(offerMap.get("labels"));
 			offerMap.remove("labels");
 			
-			System.out.println("   end   "+ offerMap.get("end"));
+			//System.out.println("   end   "+ offerMap.get("end"));
+			
 			if (offerMap.containsKey("end")
 					&& !offerMap.get("end").equalsIgnoreCase("Deal for the day")
 					&& !offerMap.get("end").equalsIgnoreCase("Deal for the today")
@@ -224,7 +225,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				offerMap.remove("end");
 			}
 			
-			System.out.println("   L.P   "+ offerMap.get("L.P"));
+			//System.out.println("   L.P   "+ offerMap.get("L.P"));
 			
 			if(!StringUtil.isEmptyString(offerMap.get("L.P"))){
 				offer.setTargetURL(offerMap.get("L.P"));
@@ -241,7 +242,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				offerMap.remove("LP");
 			}
 			
-			System.out.println("   Coupon   "+ offerMap.get("Coupon"));
+			//System.out.println("   Coupon   "+ offerMap.get("Coupon"));
 			if (offerMap.containsKey("Coupon")) {
 				offer.setLabelsString(offer.getLabelsString() + ", coupons");
 				offer.setCouponCode(offerMap.get("Coupon"));
@@ -262,13 +263,13 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			
 			for( String key : offerMap.keySet() ) {
 	            if(StringUtil.isEmptyString(offer.getDescription())){
-	            	System.out.println(key + " : \n " +offerMap.get(key));
+	            	//System.out.println(key + " : \n " +offerMap.get(key));
 	            	offer.setDescription(key + " : \n " + offerMap.get(key));
 	            } else {
 	            	offer.setDescription(offer.getDescription() + " \n " + key + " : \n " + offerMap.get(key));
 	            }
 	        }
-			System.out.println("description :: " + offer.getDescription());
+			
 			if(!StringUtil.isEmptyString(offer.getMerchantName())){
 				offer.setMerchantName(offer.getMerchantName().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
 			}
@@ -284,7 +285,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			if(!StringUtil.isEmptyString(offer.getTargetURL())){
 				offer.setTargetURL(offer.getTargetURL().replaceAll("\\p{Cntrl}", "").replaceAll("[^\\x00-\\x7F]", ""));
 			}
-			System.out.println(offer.getDescription());
+			//System.out.println("description :: " + offer.getDescription());
 			offer.setSource("payoom");
 			offers.add(offer);
 			// offerManager.saveOffer(offer);
@@ -480,8 +481,12 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 				if (elementArray[0].trim().equalsIgnoreCase("Validity")
 						|| elementArray[0].trim().equalsIgnoreCase("Validity Ends") 
 						|| elementArray[0].trim().equalsIgnoreCase("Vailidty")
-						|| elementArray[0].trim().equalsIgnoreCase("Valdity")) {
+						|| elementArray[0].trim().equalsIgnoreCase("Valdity")
+						|| elementArray[0].trim().equalsIgnoreCase("Valid tilll")
+						|| elementArray[0].trim().equalsIgnoreCase("Valid till")
+						|| elementArray[0].trim().equalsIgnoreCase("Valid")) {
 					offer.put("end", elementArray[1].trim());
+					//System.out.println("end 1:: "+elementArray[1].trim());
 				} else {
 					String value = elementArray[1];
 					if (elementArray.length > 2) {
@@ -512,6 +517,8 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 						node = node.getNext();
 					}
 					offer.put(elementArray[0].trim(), value.trim());
+					
+					//System.out.println("othersssss :: " + elementArray[0].trim() +" :: "+ value.trim());
 				}
 			}else if (node.getElement().contains("Valid tilll")) {
 				offer.put("end",
@@ -563,17 +570,15 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			offerManager.saveOffers(processFlipkartResponse(dotdResponse, "dotdList"));
 			String topResponse = ApiUtil.getFlipkartData("https://affiliate-api.flipkart.net/affiliate/offers/v1/top/json", params);
 			offerManager.saveOffers(processFlipkartResponse(topResponse, "topOffersList"));
-			String allResponse = ApiUtil.getFlipkartData("https://affiliate-api.flipkart.net/affiliate/offers/v1/all/json", params);
-			offerManager.saveOffers(processFlipkartResponse(allResponse, "allOffersList"));
-		} catch (IOException e) {
-			throw new KUException(e.getMessage(), e);
+			//String allResponse = ApiUtil.getFlipkartData("https://affiliate-api.flipkart.net/affiliate/offers/v1/all/json", params);
+			//offerManager.saveOffers(processFlipkartResponse(allResponse, "allOffersList"));
 		} catch (org.json.simple.parser.ParseException e) {
 			throw new KUException(e.getMessage(), e);
 		}
 		return true;
 	}
 	
-	private List<Offer> processFlipkartResponse(String response, String key) throws KUException, IOException, org.json.simple.parser.ParseException{
+	private List<Offer> processFlipkartResponse(String response, String key) throws KUException, org.json.simple.parser.ParseException{
 		JSONParser parser = new JSONParser();
 		JSONObject offersJson = (JSONObject) parser.parse(response);
 		//System.out.println("jsonnnnnnnnnnn ========= " + offersJson);
@@ -603,9 +608,12 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 					JSONArray images = (JSONArray)offerJson.get("imageUrls");
 					for (int j = 0 ; j < images.size(); j++) {
 						JSONObject image = (JSONObject)images.get(j);
-						if(StringUtil.isEmptyString(image.get("url"))) {
+						//System.out.println(image.get("url"));
+						if(StringUtil.isEmptyString(image.get("url")) || !((String) image.get("url")).contains("200/200") ) {
+							//System.out.println("next image");
 							continue;
 						} else {
+							//System.out.println("save this image");
 							String uploadDir = servletContext.getRealPath("/files");
 							File f = null;
 							boolean isImagesPath = false;
@@ -626,6 +634,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 									+ Constants.FILE_SEP
 									+ "flipkart"
 									+ Constants.FILE_SEP;
+							path = path.toLowerCase();
 							f = new File(uploadDir+path);
 							if(!f.exists()) {
 								f.mkdirs();
@@ -654,6 +663,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 										.replaceAll("/", "")
 										+ ".jpg";
 							}
+							path = path.toLowerCase();
 							ApiUtil.saveImageFromUrl(image.get("url").toString(), uploadDir+path);
 							if(isImagesPath){
 								offer.setImagePath("/images"+Constants.FILE_SEP+path);

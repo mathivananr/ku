@@ -25,7 +25,7 @@
 	<form:form commandName="merchantType" method="post" enctype="multipart/form-data"
 		action="/admin/saveMerchantType" id="merchantTypeForm"
 		autocomplete="off" cssClass="well">
-		<form:hidden path="id" />
+		<form:hidden path="typeId" />
 		<div class="row">
 			<div class="form-group">
 				<form:input cssClass="form-control" path="typeCode"

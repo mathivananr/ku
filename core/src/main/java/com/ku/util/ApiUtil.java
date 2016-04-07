@@ -2,6 +2,7 @@ package com.ku.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,14 +50,18 @@ public class ApiUtil {
 			HttpURLConnection connection = (HttpURLConnection) request
 					.openConnection();
 			connection.setRequestMethod("GET");
-			Map<String, String> headers = (Map<String, String>)params.get("headers");
-			for(String key : headers.keySet()) {
+			Map<String, String> headers = (Map<String, String>) params
+					.get("headers");
+			for (String key : headers.keySet()) {
 				connection.setRequestProperty(key, headers.get(key));
 			}
-			/*connection.setRequestProperty("Content-Type", "application/json");
-			connection.setRequestProperty("Fk-Affiliate-Token",
-					"ef77d485ad7b418984aeea01d2d3eaa9");
-			connection.setRequestProperty("Fk-Affiliate-Id", "adminmuni");*/
+			/*
+			 * connection.setRequestProperty("Content-Type",
+			 * "application/json");
+			 * connection.setRequestProperty("Fk-Affiliate-Token",
+			 * "ef77d485ad7b418984aeea01d2d3eaa9");
+			 * connection.setRequestProperty("Fk-Affiliate-Id", "adminmuni");
+			 */
 
 			BufferedReader in = new BufferedReader(new InputStreamReader(
 					connection.getInputStream()));
@@ -81,23 +86,29 @@ public class ApiUtil {
 	public static String postRequest() {
 		return "success";
 	}
-	
-	public static void saveImageFromUrl(String imageUrl, String destinationFile) throws IOException {
-		File file = new File(destinationFile);
-		if(!file.exists()) {
-			URL url = new URL(imageUrl);
-			InputStream is = url.openStream();
-			OutputStream os = new FileOutputStream(destinationFile);
-	
-			byte[] b = new byte[2048];
-			int length;
-	
-			while ((length = is.read(b)) != -1) {
-				os.write(b, 0, length);
+
+	public static void saveImageFromUrl(String imageUrl, String destinationFile) {
+		try {
+			File file = new File(destinationFile);
+			if (!file.exists()) {
+				URL url = new URL(imageUrl);
+				InputStream is = url.openStream();
+				OutputStream os = new FileOutputStream(destinationFile);
+
+				byte[] b = new byte[2048];
+				int length;
+
+				while ((length = is.read(b)) != -1) {
+					os.write(b, 0, length);
+				}
+
+				is.close();
+				os.close();
 			}
-	
-			is.close();
-			os.close();
+		} catch (MalformedURLException e) {
+			System.out.println("problem in saving image from url " + imageUrl + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("problem in saving image from url " + imageUrl + e.getMessage());
 		}
 	}
 

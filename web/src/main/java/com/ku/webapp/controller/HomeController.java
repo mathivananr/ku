@@ -37,10 +37,11 @@ public class HomeController extends BaseFormController {
 		model.addAttribute("metaKeywords", "");
 		model.addAttribute("metaDescription", "");
 		model.addAttribute("label", "");
-		model.addAttribute("pageNo", 2);
+		model.addAttribute("pageNo", 1);
 		try {
-			model.addAttribute("offers", offerManager.getOffersByLabels(new ArrayList<String>(), 0 , Constants.OFFER_TO_LOAD));
-		} catch(KUException e) {
+			model.addAttribute("offers", offerManager.getOffersByLabels(
+					new ArrayList<String>(), 0, Constants.OFFER_TO_LOAD));
+		} catch (KUException e) {
 			log.error(e.getMessage(), e);
 			model.addAttribute("offers", new ArrayList<Offer>());
 		}

@@ -37,7 +37,7 @@
     <display:table name="merchantList" cellspacing="0" cellpadding="0" requestURI=""
                    defaultsort="1" id="merchants" pagesize="25" class="table table-condensed table-striped table-hover" export="true">
         <display:column property="merchantName" escapeXml="true" sortable="true" titleKey="merchants.merchantName" style="width: 25%"
-                        url="/admin/merchant?from=list" paramId="id" paramProperty="id"/>
+                        url="/admin/merchant?from=list" paramId="id" paramProperty="merchantId"/>
         <display:column property="merchantType.typeName" escapeXml="true" sortable="true" titleKey="merchants.merchantType"
                         style="width: 34%"/>
         <display:column sortProperty="enabled" sortable="true" titleKey="merchant.enabled"

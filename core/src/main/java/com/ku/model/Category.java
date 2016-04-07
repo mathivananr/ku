@@ -22,22 +22,22 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
-@Table(name = "ku_product_category")
-public class OfferCategory extends BaseObject implements Serializable {
+@Table(name = "ku_category")
+public class Category extends BaseObject implements Serializable {
 
 	private static final long serialVersionUID = 3832626162173359411L;
 	private Long id;
 	private String categoryName;
 	private String description;
-	private OfferCategory parentCategory;
-	private List<OfferCategory> subCategories = new ArrayList<OfferCategory>();
+	private Category parentCategory;
+	private List<Category> subCategories = new ArrayList<Category>();
 	private Calendar createdOn = new GregorianCalendar();
 	private Calendar updatedOn = new GregorianCalendar();
 	private Calendar createdIpAddress;
 	private Calendar updatedIpAddress;
 	private boolean enabled;
 
-	public OfferCategory() {
+	public Category() {
 		super();
 	}
 
@@ -72,20 +72,20 @@ public class OfferCategory extends BaseObject implements Serializable {
 
 	@ManyToOne(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "parent_category")
-	public OfferCategory getParentCategory() {
+	public Category getParentCategory() {
 		return parentCategory;
 	}
 
-	public void setParentCategory(OfferCategory parentCategory) {
+	public void setParentCategory(Category parentCategory) {
 		this.parentCategory = parentCategory;
 	}
 
 	@OneToMany(mappedBy = "parentCategory")
-	public List<OfferCategory> getSubCategories() {
+	public List<Category> getSubCategories() {
 		return subCategories;
 	}
 
-	public void setSubCategories(List<OfferCategory> subCategories) {
+	public void setSubCategories(List<Category> subCategories) {
 		this.subCategories = subCategories;
 	}
 
@@ -139,14 +139,14 @@ public class OfferCategory extends BaseObject implements Serializable {
 		if (this == o) {
 			return true;
 		}
-		if (!(o instanceof OfferCategory)) {
+		if (!(o instanceof Category)) {
 			return false;
 		}
 
-		final OfferCategory productCategory = (OfferCategory) o;
+		final Category category = (Category) o;
 
-		return !(id != null ? !id.equals(productCategory.getId())
-				: productCategory.getId() != null);
+		return !(id != null ? !id.equals(category.getId())
+				: category.getId() != null);
 
 	}
 

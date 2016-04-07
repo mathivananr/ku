@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ku.common.KUException;
 import com.ku.model.Merchant;
 import com.ku.model.MerchantType;
+import com.ku.model.Offer;
+import com.ku.model.OfferLabel;
 
 public interface MerchantDao extends GenericDao<Merchant, Long> {
 
@@ -33,4 +35,8 @@ public interface MerchantDao extends GenericDao<Merchant, Long> {
 	List<Merchant> getMerchantByType(String merchantType);
 
 	List<Merchant> getMerchantByTypes(List<String> merchantTypes);
+	
+	OfferLabel getOfferLabelByLabel(String label) throws KUException;
+	
+	OfferLabel saveOfferLabel(OfferLabel offerLabel) throws KUException;
 }

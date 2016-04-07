@@ -25,7 +25,7 @@
 	<form:form commandName="merchant" method="post" enctype="multipart/form-data"
 		action="/admin/saveMerchantDetails" id="merchantForm"
 		autocomplete="off" cssClass="well">
-		<form:hidden path="id" />
+		<form:hidden path="merchantId" />
 		<form:hidden path="logoPath" />
 		<div class="row">
 			<div class="form-group">
@@ -41,9 +41,9 @@
 		</div>
 		<div class="row">
 			<div class="form-group">
-				<select id="merchantType" name="merchantType.id" class="form-control">
-					<c:forEach items="${merchantTypes}" var="type">
-	                	<option value="${type.value}" ${fn:contains(merchantType.id, type.value) ? 'selected' : ''}>${type.label}</option>
+				<select id="merchantType" name="merchantType.typeId" class="form-control">
+					<c:forEach items="${merchantTypeList}" var="type">
+	                	<option value="${type.typeId}" ${fn:contains(merchantType.typeId, type.typeName) ? 'selected' : ''}>${type.typeName}</option>
 	                </c:forEach>
 				</select>
 			</div>
