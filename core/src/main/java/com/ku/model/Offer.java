@@ -324,7 +324,7 @@ public class Offer extends BaseObject implements Serializable {
 	 */
 	public String toString() {
 		ToStringBuilder sb = new ToStringBuilder(this,
-				ToStringStyle.DEFAULT_STYLE).append("id", this.offerId);
+				ToStringStyle.DEFAULT_STYLE).append("offerId", this.offerId);
 		return sb.toString();
 	}
 }
