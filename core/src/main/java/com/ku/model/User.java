@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.Version;
@@ -65,6 +67,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
     private Address address = new Address();
     private Integer version;
     private Set<Role> roles = new HashSet<Role>();
+    private Page page;
     private boolean enabled;
     private boolean accountExpired;
     private boolean accountLocked;
@@ -202,7 +205,16 @@ public class User extends BaseObject implements Serializable, UserDetails {
         getRoles().add(role);
     }
 
-    /**
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "owner", cascade = CascadeType.ALL)
+    public Page getPage() {
+		return page;
+	}
+
+	public void setPage(Page page) {
+		this.page = page;
+	}
+
+	/**
      * @return GrantedAuthority[] an array of roles.
      * @see org.springframework.security.core.userdetails.UserDetails#getAuthorities()
      */

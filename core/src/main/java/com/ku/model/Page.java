@@ -10,7 +10,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -18,7 +19,7 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
-@Table(name = "ku_offer")
+@Table(name = "ku_page")
 public class Page extends BaseObject implements Serializable {
 	private static final long serialVersionUID = 3832626162173359411L;
 
@@ -76,6 +77,8 @@ public class Page extends BaseObject implements Serializable {
 		this.description = description;
 	}
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "owner_id")
 	public User getOwner() {
 		return owner;
 	}
