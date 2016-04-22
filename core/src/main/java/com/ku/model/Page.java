@@ -11,11 +11,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.search.annotations.DocumentId;
 
 @Entity
@@ -33,6 +37,7 @@ public class Page extends BaseObject implements Serializable {
 	private List<Category> categories;
 	private Calendar createdOn;
 	private Calendar updatedOn;
+	private boolean enabled;
 	
 	public Page() {
 		super();
@@ -50,7 +55,7 @@ public class Page extends BaseObject implements Serializable {
 		this.pageId = pageId;
 	}
 
-	@Column(name = "page_name")
+	@Column(name = "page_name", unique=true)
 	public String getPageName() {
 		return pageName;
 	}
@@ -68,7 +73,7 @@ public class Page extends BaseObject implements Serializable {
 		this.title = title;
 	}
 
-	@Column(name = "description")
+	@Column(name = "description", columnDefinition = "TEXT")
 	public String getDescription() {
 		return description;
 	}
@@ -87,6 +92,10 @@ public class Page extends BaseObject implements Serializable {
 		this.owner = owner;
 	}
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@Fetch(value = FetchMode.SELECT)
+	@JoinTable(name = "ku_rel_page_merchant_type", joinColumns = {@JoinColumn(name="page_id")},
+            inverseJoinColumns = {@JoinColumn(name="type_id")} )
 	public List<MerchantType> getMerchantTypes() {
 		return merchantTypes;
 	}
@@ -95,6 +104,10 @@ public class Page extends BaseObject implements Serializable {
 		this.merchantTypes = merchantTypes;
 	}
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@Fetch(value = FetchMode.SELECT)
+	@JoinTable(name = "ku_rel_page_merchant", joinColumns = {@JoinColumn(name="page_id")},
+            inverseJoinColumns = {@JoinColumn(name="merchant_id")} )
 	public List<Merchant> getMerchants() {
 		return merchants;
 	}
@@ -103,6 +116,10 @@ public class Page extends BaseObject implements Serializable {
 		this.merchants = merchants;
 	}
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@Fetch(value = FetchMode.SELECT)
+	@JoinTable(name = "ku_rel_page_category", joinColumns = {@JoinColumn(name="page_id")},
+            inverseJoinColumns = {@JoinColumn(name="category_id")} )
 	public List<Category> getCategories() {
 		return categories;
 	}
@@ -127,6 +144,15 @@ public class Page extends BaseObject implements Serializable {
 		this.updatedOn = updatedOn;
 	}
 
+	@Column(name = "is_enabled", columnDefinition = "boolean default true", nullable = false)
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

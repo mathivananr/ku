@@ -52,7 +52,7 @@
 					href="#all" data-toggle="tab"><p>All</p></a></li>
 				<c:forEach var="merchantType" items="${merchantTypeList}">
 					<li class="col-lg-12 col-md-12 col-sm-12 col-xs-12 nopadding"><a class="link-color"
-						href="#${merchantType.id}" data-toggle="tab"><p>${merchantType.typeName}</p></a></li>
+						href="#${merchantType.typeId}" data-toggle="tab"><p>${merchantType.typeName}</p></a></li>
 				</c:forEach>
 			</ul>
 		</div>
@@ -76,7 +76,7 @@
 				</c:forEach>
 			</div>
 			<c:forEach var="merchantType" items="${merchantTypeList}">
-				<div class="tab-pane col-lg-12 col-md-12 col-sm-12 col-xs-12" id="${merchantType.id}">
+				<div class="tab-pane col-lg-12 col-md-12 col-sm-12 col-xs-12" id="${merchantType.typeId}">
 					<div class="page-header">
 						<h3>${merchantType.typeName}</h3>
 					</div>
@@ -92,9 +92,9 @@
 				</div>
 			</c:forEach>
 	
-			<c:forEach var="merchantType" items="${merchantTypeList}">
-				<div class="tab-pane" id="${merchantType.id}"></div>
-			</c:forEach>
+			<%-- <c:forEach var="merchantType" items="${merchantTypeList}">
+				<div class="tab-pane" id="${merchantType.typeId}"></div>
+			</c:forEach> --%>
 		</div>
 	</div>
 	<!-- /tabs -->

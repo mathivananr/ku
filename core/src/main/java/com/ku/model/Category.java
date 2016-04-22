@@ -26,7 +26,7 @@ import org.hibernate.search.annotations.DocumentId;
 public class Category extends BaseObject implements Serializable {
 
 	private static final long serialVersionUID = 3832626162173359411L;
-	private Long id;
+	private Long categoryId;
 	private String categoryName;
 	private String description;
 	private Category parentCategory;
@@ -44,12 +44,13 @@ public class Category extends BaseObject implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@DocumentId
-	public Long getId() {
-		return id;
+	@Column(name = "offer_id")
+	public Long getCategoryId() {
+		return categoryId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setCategoryId(Long categoryId) {
+		this.categoryId = categoryId;
 	}
 
 	@Column(name = "category_name")
@@ -145,8 +146,8 @@ public class Category extends BaseObject implements Serializable {
 
 		final Category category = (Category) o;
 
-		return !(id != null ? !id.equals(category.getId())
-				: category.getId() != null);
+		return !(categoryId != null ? !categoryId.equals(category.getCategoryId())
+				: category.getCategoryId() != null);
 
 	}
 
@@ -154,7 +155,7 @@ public class Category extends BaseObject implements Serializable {
 	 * {@inheritDoc}
 	 */
 	public int hashCode() {
-		return (id != null ? id.hashCode() : 0);
+		return (categoryId != null ? categoryId.hashCode() : 0);
 	}
 
 	/**
@@ -162,7 +163,7 @@ public class Category extends BaseObject implements Serializable {
 	 */
 	public String toString() {
 		ToStringBuilder sb = new ToStringBuilder(this,
-				ToStringStyle.DEFAULT_STYLE).append("id", this.id);
+				ToStringStyle.DEFAULT_STYLE).append("categoryId", this.categoryId);
 		return sb.toString();
 	}
 
