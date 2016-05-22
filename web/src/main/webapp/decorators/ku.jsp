@@ -77,23 +77,137 @@
 	<!--         Fixed Navigation
         ==================================== -->
     
-
 	<header id="navigation" class="navbar">
 		<!-- <div class="container"> -->
 		
 		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+			<div class="search-row">
+				<a class="navbar-brand" href="${applicationUrl}">
+					
+				</a>
+			</div>
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-5 col-xs-8 ">
+			<div class="dtable hw100">
+				<div class="dtable-cell hw100">
+					<div class="text-center">
+						<div class="row search-row animated fadeInUp">
+							<div class="col-lg-10 col-md-10 col-sm-10 col-xs-9 search-col relative">
+								<i class="icon-docs icon-append"></i> <input type="text"
+									name="search" id="search" class="form-control has-icon"
+									placeholder="Search">
+							</div>
+							<div class="col-lg-2 col-md-2 col-sm-2 col-xs-3 search-col">
+								<button class="btn btn-primary btn-search btn-block">
+									<i class="fa fa-search"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="col-lg-3 col-md-3 col-sm-4 col-xs-10 hidden-xs">
+			<nav class="collapse navbar-collapse navbar-right search-row" role="navigation">
+				<ul id="nav" class="nav navbar-nav">
+					<li class="text-center">
+						<a href="/chat">
+							<i class="fa fa-comment" aria-hidden="true"></i>
+							<p>Chat</p>
+						</a>
+					</li>
+					<li class="text-center">
+						<a href="/offers">
+							<i class="fa fa-refresh" aria-hidden="true"></i>
+							<p>Offers</p>
+						</a>
+					</li>
+					<li class="text-center dropdown">
+						<a href="#account" class="dropdown-toggle" data-toggle="dropdown">
+							<i class="fa fa-user" aria-hidden="true"></i>
+							<i class="fa fa-sort-desc" aria-hidden="true"></i>
+							<p>Account</p>
+						</a>
+                        <ul class="dropdown-menu">
+                            	<li><div class="text-center"><a class="btn btn-default" data-toggle="modal" data-target="#myModal" href="#myModal">Login</a></div></li>
+                            	<li><div class="account-signup" > New User? <a href="/signup">Register</a></div></li>
+                        </ul>
+                    </li>
+				</ul>
+			</nav>
+		</div>
+		
+		<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+              <h4 class="modal-title" id="myModalLabel">Login to site.com</h4>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-xs-6">
+                      <div class="well">
+                          <form id="loginForm" method="POST" action="/login/" novalidate="novalidate">
+                              <div class="form-group">
+                                  <label for="username" class="control-label">Username</label>
+                                  <input type="text" class="form-control" id="username" name="username" value="" required="" title="Please enter you username" placeholder="example@gmail.com">
+                                  <span class="help-block"></span>
+                              </div>
+                              <div class="form-group">
+                                  <label for="password" class="control-label">Password</label>
+                                  <input type="password" class="form-control" id="password" name="password" value="" required="" title="Please enter your password">
+                                  <span class="help-block"></span>
+                              </div>
+                              <div id="loginErrorMsg" class="alert alert-error hide">Wrong username og password</div>
+                              <div class="checkbox">
+                                  <label>
+                                      <input type="checkbox" name="remember" id="remember"> Remember login
+                                  </label>
+                                  <p class="help-block">(if this is a private computer)</p>
+                              </div>
+                              <button type="submit" class="btn btn-success btn-block">Login</button>
+                              <a href="/forgot/" class="btn btn-default btn-block">Help to login</a>
+                          </form>
+                      </div>
+                  </div>
+                  <div class="col-xs-6">
+                      <p class="lead">Register now for <span class="text-success">FREE</span></p>
+                      <ul class="list-unstyled" style="line-height: 2">
+                          <li><span class="fa fa-check text-success"></span> See all your orders</li>
+                          <li><span class="fa fa-check text-success"></span> Fast re-order</li>
+                          <li><span class="fa fa-check text-success"></span> Save your favorites</li>
+                          <li><span class="fa fa-check text-success"></span> Fast checkout</li>
+                          <li><span class="fa fa-check text-success"></span> Get a gift <small>(only new customers)</small></li>
+                          <li><a href="/read-more/"><u>Read more</u></a></li>
+                      </ul>
+                      <p><a href="/new-customer/" class="btn btn-info btn-block">Yes please, register now!</a></p>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+  </div>
+</div>
+  
+		
+		<div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
 			<nav class='sidebar sidebar-menu-collapsed'> 
 				<a href='javascript void(0);' id='justify-icon'>
-        			<span class='fa fa-bars'></span>
+        			<span class='fa fa-bars pull-right'></span>
      			</a>
 				<div id="side-menu" class="side-menu hide">
 			        <ul class='level1'>
-			            <li class='active'> <a class='expandable' href='#' title='Dashboard'>
-			            <span class='glyphicon glyphicon-home collapsed-element'></span>
-			            <span class='expanded-element'>Dashboard</span>
-			          </a>
+			            <li class='parent-menu'> 
+			            	<a class='' href='#' title='Dashboard'>
+					            <span class='glyphicon glyphicon-home collapsed-element'></span>
+					            <span class='expanded-element'>Dashboard</span>
+					        </a>
 			
-			                <ul class='level2'>
+			                <ul class='sub-menu' style="display:none;">
 			                    <li> <a href='#' title='Traffic'>Traffic</a>
 			
 			                    </li>
@@ -128,12 +242,12 @@
 	      			</a>
       			</div>
     		</nav>
-			<a class="navbar-brand" href="${applicationUrl}">
+			<%-- <a class="navbar-brand" href="${applicationUrl}">
 					<h1 id="logo">
-						<%-- <img src="images/core/logo.png" alt="${applicationName}"> --%>
+						<img src="images/core/logo.png" alt="${applicationName}">
 						LOGO
 					</h1>
-				</a>
+				</a> --%>
 			<%-- <div class="navbar-header">
 				<!--     responsive nav button -->
 				<button type="button" class="navbar-toggle" data-toggle="collapse"
@@ -176,28 +290,6 @@
 			<!-- main nav -->
 
 		</div>
-		
-		<div class="col-lg-6 col-md-6 col-sm-6 col-xs-10">
-			<div class="dtable hw100">
-				<div class="dtable-cell hw100">
-					<div class="text-center">
-						<div class="row search-row animated fadeInUp">
-							<div class="col-lg-8 col-md-8 col-sm-8 col-xs-10 search-col relative">
-								<i class="icon-docs icon-append"></i> <input type="text"
-									name="search" id="search" class="form-control has-icon"
-									placeholder="Search">
-							</div>
-							<div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 search-col">
-								<button class="btn btn-primary btn-search btn-block">
-									<i class="fa fa-search"></i>
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
 		<!-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 				<div id="the-basics">
@@ -205,22 +297,22 @@
 				</div>
 			</div>
 		</div> -->
-		<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+		<!-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 			<div class="dtable hw100">
 				<div class="dtable-cell hw100">
 					<div class="row search-row">
-						<button type="button" class="btn btn-danger pull-right">Create Page</button>
+						<a href="/user/createPage" class="btn btn-danger pull-right">Create Page</a>
 					</div>
 				</div>
 			</div>
-			<!-- <ul id="nav" class="nav navbar-nav">
+			<ul id="nav" class="nav navbar-nav">
 					<li class="current"><a href="#body">Home</a></li>
 					<li><a href="#features">Features</a></li>
 					<li><a href="#works">Work</a></li>
 					<li><a href="#team">Team</a></li>
 					<li><a href="#contact">Contact</a></li>
-				</ul> -->
-		</div>
+				</ul>
+		</div> -->
 	</header>
 
 	<!--        End Fixed Navigation

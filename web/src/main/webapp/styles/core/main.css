@@ -22,7 +22,7 @@ figure, p {
 }
 
 .navbar a {
-    color: #fff;
+    color: #717171;
 	
     -webkit-transition: all .3s ease-in 0s;
        -moz-transition: all .3s ease-in 0s;
@@ -41,7 +41,7 @@ iframe {
 }
 
 .navbar a:focus, a:hover {
-    color: #6CB670;
+    color: #717171;
 }
 
 h1, h2, h3,
@@ -169,15 +169,17 @@ body > section,
 }
 
 .navbar-nav li a {
-	border-top: 1px solid transparent;
+	/* border-top: 1px solid transparent; */
+	padding-bottom: 1px;
+    padding-top: 1px;
 }
 
 .navbar-nav li a.current,
 .navbar-nav li a:focus,
 .navbar-nav li a:hover {
 	background-color: transparent;
-	border-top: 1px solid #32B0EE;
-	color: #fff;
+	/* border-top: 1px solid #32B0EE; */
+	color: #717171;
 }
 
 
@@ -761,6 +763,19 @@ label.error {
     visibility: visible;
 }
 
+.dropdown-menu {
+	padding : 10px !important;	
+}
+
+.account-signup {
+	font-size : 12px;
+	padding : 10px;
+}
+
+.account-signup a {
+	text-decoration:underline !important;
+}
+
 .payment-link-text {
   color: #337ab7;
   text-decoration: none;
@@ -995,7 +1010,7 @@ nav.sidebar-menu-expanded {
 }
 nav.sidebar {
     position: fixed;
-    left: 0px;
+    right: 0px;
     height: 100%;
     /* background: none repeat scroll 0 0 #0EB493; */
     color: white;
@@ -1087,4 +1102,41 @@ nav.sidebar ul.level1 ul.level2 li a {
 }
 .side-menu {
 	background: none repeat scroll 0 0 #0EB493;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.parent-menu:hover .sub-menu { 
+	display: block; 
+}
+	
+/* Large desktops and laptops */
+@media (min-width: 1200px) {
+
+}
+
+/* Landscape tablets and medium desktops */
+@media (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+/* Portrait tablets and small desktops */
+@media (min-width: 768px) and (max-width: 991px) {
+	.navbar-nav li a p {
+    	font-size: 11px;
+	} 
+}
+
+/* Landscape phones and portrait tablets */
+@media (max-width: 767px) {
+
+}
+
+/* Portrait phones and smaller */
+@media (max-width: 480px) {
+	nav.sidebar {
+	    padding: 14px 10px;
+	}
 }
