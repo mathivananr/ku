@@ -22,8 +22,19 @@ $(window).scroll(function(){
 	
 });
 
+$(window).on('hashchange', function() {
+	var target = document.location.hash.replace("#", "");
+	if(target== 'login') {
+		$('#myModal').modal('show');
+	}
+});
+
 (function () {
     $(function () {
+    	var target = document.location.hash.replace("#", "");
+    	if(target== 'login') {
+    		$('#myModal').modal('show');
+    	}
         var SideBAR;
         SideBAR = (function () {
             function SideBAR() {}

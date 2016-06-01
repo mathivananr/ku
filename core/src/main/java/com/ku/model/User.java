@@ -121,13 +121,13 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return passwordHint;
     }
 
-    @Column(name = "first_name", nullable = false, length = 50)
+    @Column(name = "first_name", length = 500)
     @Field
     public String getFirstName() {
         return firstName;
     }
 
-    @Column(name = "last_name", nullable = false, length = 50)
+    @Column(name = "last_name", length = 500)
     @Field
     public String getLastName() {
         return lastName;
@@ -231,12 +231,12 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return version;
     }
 
-    @Column(name = "account_enabled")
+    @Column(name = "account_enabled", columnDefinition = "boolean default true")
     public boolean isEnabled() {
         return enabled;
     }
 
-    @Column(name = "account_expired", nullable = false)
+    @Column(name = "account_expired", columnDefinition = "boolean default false")
     public boolean isAccountExpired() {
         return accountExpired;
     }
@@ -250,7 +250,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return !isAccountExpired();
     }
 
-    @Column(name = "account_locked", nullable = false)
+    @Column(name = "account_locked", columnDefinition = "boolean default true")
     public boolean isAccountLocked() {
         return accountLocked;
     }
@@ -264,7 +264,7 @@ public class User extends BaseObject implements Serializable, UserDetails {
         return !isAccountLocked();
     }
 
-    @Column(name = "credentials_expired", nullable = false)
+    @Column(name = "credentials_expired", columnDefinition = "boolean default false")
     public boolean isCredentialsExpired() {
         return credentialsExpired;
     }

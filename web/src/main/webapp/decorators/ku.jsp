@@ -130,9 +130,34 @@
 							<p>Account</p>
 						</a>
                         <ul class="dropdown-menu">
-                            	<li><div class="text-center"><a class="btn btn-default" data-toggle="modal" data-target="#myModal" href="#myModal">Login</a></div></li>
-                            	<li><div class="account-signup" > New User? <a href="/signup">Register</a></div></li>
-                        </ul>
+							<security:authentication var="user" property="principal" />
+							<c:choose>
+								<c:when test="${user != null && user != 'anonymousUser'}">
+									<li>
+										<div class="text-center">
+											<span>Welcome <b>${user.username}</b></span>
+										</div>
+									</li>
+									<li>
+										<div class="text-center">
+											<a class="btn btn-default" href="/logout">Logout</a>
+										</div>
+									</li>
+								</c:when>
+								<c:otherwise>
+									<li>
+										<div class="text-center">
+											<a id="login-link" class="btn btn-default" data-toggle="modal"
+												data-target="#myModal" href="#myModal">Login</a>
+										</div>
+									</li>
+									<li><div class="account-signup">
+											New User? <a data-toggle="modal"
+												data-target="#myModal" href="#myModal">Register</a>
+										</div>
+								</c:otherwise>
+							</c:choose>
+						</ul>
                     </li>
 				</ul>
 			</nav>
@@ -145,46 +170,52 @@
     <div class="modal-content">
           <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-              <h4 class="modal-title" id="myModalLabel">Login to site.com</h4>
+              <h4 class="modal-title" id="myModalLabel">Login</h4>
           </div>
           <div class="modal-body">
               <div class="row">
                   <div class="col-xs-6">
                       <div class="well">
-                          <form id="loginForm" method="POST" action="/login/" novalidate="novalidate">
+                          <form id="loginForm" method="POST" action="/j_security_check" novalidate="novalidate">
                               <div class="form-group">
                                   <label for="username" class="control-label">Username</label>
-                                  <input type="text" class="form-control" id="username" name="username" value="" required="" title="Please enter you username" placeholder="example@gmail.com">
+                                  <input type="text" class="form-control" id="j_username" name="j_username" value="" required="" title="Please enter you username" placeholder="example@gmail.com">
                                   <span class="help-block"></span>
                               </div>
                               <div class="form-group">
                                   <label for="password" class="control-label">Password</label>
-                                  <input type="password" class="form-control" id="password" name="password" value="" required="" title="Please enter your password">
+                                  <input type="password" class="form-control" id="j_password" name="j_password" value="" required="" title="Please enter your password">
                                   <span class="help-block"></span>
                               </div>
                               <div id="loginErrorMsg" class="alert alert-error hide">Wrong username og password</div>
-                              <div class="checkbox">
-                                  <label>
-                                      <input type="checkbox" name="remember" id="remember"> Remember login
-                                  </label>
-                                  <p class="help-block">(if this is a private computer)</p>
-                              </div>
                               <button type="submit" class="btn btn-success btn-block">Login</button>
-                              <a href="/forgot/" class="btn btn-default btn-block">Help to login</a>
                           </form>
                       </div>
                   </div>
                   <div class="col-xs-6">
-                      <p class="lead">Register now for <span class="text-success">FREE</span></p>
-                      <ul class="list-unstyled" style="line-height: 2">
-                          <li><span class="fa fa-check text-success"></span> See all your orders</li>
-                          <li><span class="fa fa-check text-success"></span> Fast re-order</li>
-                          <li><span class="fa fa-check text-success"></span> Save your favorites</li>
-                          <li><span class="fa fa-check text-success"></span> Fast checkout</li>
-                          <li><span class="fa fa-check text-success"></span> Get a gift <small>(only new customers)</small></li>
-                          <li><a href="/read-more/"><u>Read more</u></a></li>
-                      </ul>
-                      <p><a href="/new-customer/" class="btn btn-info btn-block">Yes please, register now!</a></p>
+                  		<div class="well">
+                          <form id="signupForm" method="post" action="signup" novalidate="novalidate">
+                              <div class="form-group">
+                                  <label for="username" class="control-label">Username</label>
+                                  <input type="text" class="form-control" id="username" name="username" value="" required="" title="Please enter you username" placeholder="username">
+                                  <span class="help-block"></span>
+                              </div>
+                              
+                              <div class="form-group">
+                                  <label for="password" class="control-label">Password</label>
+                                  <input type="password" class="form-control" id="password" name="password" value="" required="" title="Please enter your password" placeholder="password">
+                                  <span class="help-block"></span>
+                              </div>
+                              
+                              <div class="form-group">
+                                  <label for="email" class="control-label">Email</label>
+                                  <input type="text" class="form-control" id="email" name="email" value="" required="" title="Please enter you email" placeholder="example@gmail.com">
+                                  <span class="help-block"></span>
+                              </div>
+                              <div id="loginErrorMsg" class="alert alert-error hide">Wrong username og password</div>
+                              <button type="submit" class="btn btn-danger btn-block">Signup</button>
+                          </form>
+                      </div>
                   </div>
               </div>
           </div>
