@@ -15,6 +15,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.tuckey.web.filters.urlrewrite.utils.StringUtils;
 
 import com.ku.Constants;
@@ -29,7 +31,6 @@ import com.ku.webapp.util.RequestUtil;
  * @author <a href="mailto:matt@raibledesigns.com">Matt Raible</a>
  */
 @Controller
-@RequestMapping("/signup*")
 public class SignupController extends BaseFormController {
     private RoleManager roleManager;
 
@@ -44,12 +45,12 @@ public class SignupController extends BaseFormController {
     }
 
     @ModelAttribute
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/signup*", method = RequestMethod.GET)
     public User showForm() {
         return new User();
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/signup*", method = RequestMethod.POST)
     public String onSubmit(final User user, final BindingResult errors, final HttpServletRequest request, final HttpServletResponse response)
             throws Exception {
         if (request.getParameter("cancel") != null) {
@@ -118,4 +119,18 @@ public class SignupController extends BaseFormController {
 
         return getSuccessView();
     }
+    
+	@RequestMapping(value = "/ajaxLogin", method = RequestMethod.POST)
+	public @ResponseBody
+	String login(@RequestParam("j_username") String username,
+			@RequestParam("j_password") String password,
+			final HttpServletRequest request, final HttpServletResponse response)
+			throws Exception {
+		boolean result = this.getUserManager().login(username, password);
+		if(result) {
+			return "success";
+		} else {
+			return "failure";
+		}
+	}
 }

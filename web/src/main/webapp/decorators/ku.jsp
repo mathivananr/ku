@@ -176,7 +176,7 @@
               <div class="row">
                   <div class="col-xs-6">
                       <div class="well">
-                          <form id="loginForm" method="POST" action="/j_security_check" novalidate="novalidate">
+                          <form id="loginForm" novalidate="novalidate">
                               <div class="form-group">
                                   <label for="username" class="control-label">Username</label>
                                   <input type="text" class="form-control" id="j_username" name="j_username" value="" required="" title="Please enter you username" placeholder="example@gmail.com">
@@ -188,7 +188,7 @@
                                   <span class="help-block"></span>
                               </div>
                               <div id="loginErrorMsg" class="alert alert-error hide">Wrong username og password</div>
-                              <button type="submit" class="btn btn-success btn-block">Login</button>
+                              <button type="button" onclick="ajaxLogin();" class="btn btn-success btn-block">Login</button>
                           </form>
                       </div>
                   </div>

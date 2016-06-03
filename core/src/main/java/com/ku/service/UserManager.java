@@ -138,4 +138,13 @@ public interface UserManager extends GenericManager<User, Long> {
      * @throws UserExistsException
      */
     User updatePassword(String username, String currentPassword, String recoveryToken, String newPassword, String applicationUrl) throws UserExistsException;
+    
+    /**
+     * login user
+     * 
+     * @param username
+     * @param password
+     * @return
+     */
+    boolean login(String username, String password);
 }

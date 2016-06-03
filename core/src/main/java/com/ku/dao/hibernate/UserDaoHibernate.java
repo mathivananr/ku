@@ -85,6 +85,22 @@ public class UserDaoHibernate extends GenericDaoHibernate<User, Long> implements
         }
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public UserDetails loadUser(String username, String password)
+			throws UsernameNotFoundException {
+		List users = getSession().createCriteria(User.class)
+				.add(Restrictions.eq("username", username))
+				.add(Restrictions.eq("password", password)).list();
+		if (users == null || users.isEmpty()) {
+			throw new UsernameNotFoundException("user '" + username
+					+ "' not found...");
+		} else {
+			return (UserDetails) users.get(0);
+		}
+	}
+    
     /**
      * {@inheritDoc}
      */

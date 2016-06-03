@@ -336,3 +336,40 @@ $('#loadMore').click(
 		function(e) {
 			loadMoreOffers();
 });
+
+function ajaxLogin(){
+    
+    var user_pass = $("#j_password").val();
+    var user_name = $("#j_username").val(); 
+ 
+//Ajax login - we send credentials to j_spring_security_check (as in form based login
+    $.ajax({
+          url: "/ajaxLogin",    
+          data: { j_username: user_name , j_password: user_pass }, 
+          type: "POST",
+          beforeSend: function (xhr) {
+             xhr.setRequestHeader("X-Ajax-call", "true");
+          },
+          success: function(result) {   
+        	  alert(result);
+          //if login is success, hide the login modal and
+          //re-execute the function which called the protected resource
+          //(#7 in the diagram flow)
+         /* if (result == "ok") {
+  
+            $("#ajax_login_error_"+ suffix).html("");            
+            $('#ajaxLogin').hide();
+             
+            return true;
+          }else {           
+             
+            $("#ajax_login_error_"+ suffix).html('<span  class="alert display_b clear_b centeralign">Bad user/password</span>') ;
+            return false;           
+        }*/
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown){
+        $("#ajax_login_error_"+ suffix).html("Bad user/password") ;
+        return false; 
+    }
+});
+}

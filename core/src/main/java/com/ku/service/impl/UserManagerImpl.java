@@ -12,6 +12,8 @@ import com.ku.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -185,6 +187,25 @@ public class UserManagerImpl extends GenericManagerImpl<User, Long> implements U
         return (User) userDao.loadUserByUsername(username);
     }
 
+    public boolean login(String username, String password) {
+    	try {
+    		User user = (User) userDao.loadUserByUsername(username);
+    		if (user.getPassword().equalsIgnoreCase(passwordEncoder.encode(password))) {
+        		// log user in automatically
+                final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                        user.getUsername(), password, user.getAuthorities());
+                auth.setDetails(user);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+        		return true;
+
+    		} else {
+    			return false;
+    		}
+    	} catch (UsernameNotFoundException e) {
+    		return false;
+    	}
+    }
+    
     /**
      * {@inheritDoc}
      */
