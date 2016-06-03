@@ -27,6 +27,18 @@ public interface UserDao extends GenericDao<User, Long> {
     UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
     /**
+     * Gets users information based on login name and password.
+     * @param username the user's username
+     * @param password the user's password
+     * @return userDetails populated userDetails object
+     * @throws org.springframework.security.core.userdetails.UsernameNotFoundException thrown when user not
+     * found in database
+     */
+    @Transactional
+    UserDetails loadUser(String username, String password)
+			throws UsernameNotFoundException;
+			
+    /**
      * Gets a list of users ordered by the uppercase version of their username.
      *
      * @return List populated list of users
