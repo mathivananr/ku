@@ -31,6 +31,30 @@ $(window).on('hashchange', function() {
 
 (function () {
     $(function () {
+    	
+    	/** 
+    	 * log user actions by read user link clicks 
+    	 */
+    	$('a').click(
+    			function(e) {
+    				var link = $(this).attr('href');
+    				var title = $(this).attr('title');
+    				if (title != undefined && title != null && title != ''
+    						&& link != undefined && link != null && link != '') {
+    					$.ajax({
+    						type : "GET",
+    						url : "/log",
+    						data : "title=" + title + "&link=" + link,
+    						success : function(response) {
+    							//console.log("success");
+    						},
+    						error : function(e) {
+    							//console.log('Error: ' + e);
+    						}
+    					});
+    			}
+    	});
+    	
     	var target = document.location.hash.replace("#", "");
     	if(target== 'login') {
     		$('#myModal').modal('show');
@@ -280,28 +304,6 @@ $(window).bind("load", function() {
 					})
 				});*/
 
-/** 
- * log user actions by read user link clicks 
- */
-$('a').click(
-		function(e) {
-			var link = $(this).attr('href');
-			var title = $(this).attr('title');
-			if (title != undefined && title != null && title != ''
-					&& link != undefined && link != null && link != '') {
-				$.ajax({
-					type : "GET",
-					url : "/log",
-					data : "title=" + title + "&link=" + link,
-					success : function(response) {
-						//console.log("success");
-					},
-					error : function(e) {
-						//console.log('Error: ' + e);
-					}
-				});
-		}
-});
 
 function loadMoreOffers() {
 	var label = $("#label").val();
@@ -351,7 +353,7 @@ function ajaxLogin(){
              xhr.setRequestHeader("X-Ajax-call", "true");
           },
           success: function(result) {   
-        	  alert(result);
+        	  $('#myModal').modal('hide');
           //if login is success, hide the login modal and
           //re-execute the function which called the protected resource
           //(#7 in the diagram flow)

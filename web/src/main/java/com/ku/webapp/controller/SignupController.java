@@ -99,7 +99,7 @@ public class SignupController extends BaseFormController {
 
         // log user in automatically
         final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user.getUsername(), password, user.getAuthorities());
+                user, password, user.getAuthorities());
         auth.setDetails(user);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
@@ -112,7 +112,7 @@ public class SignupController extends BaseFormController {
         message.setSubject(getText("signup.email.subject", locale));
 
         try {
-            sendUserMessage(user, getText("signup.email.message", locale), RequestUtil.getAppURL(request));
+            //sendUserMessage(user, getText("signup.email.message", locale), RequestUtil.getAppURL(request));
         } catch (final MailException me) {
             saveError(request, me.getMostSpecificCause().getMessage());
         }
@@ -126,6 +126,7 @@ public class SignupController extends BaseFormController {
 			@RequestParam("j_password") String password,
 			final HttpServletRequest request, final HttpServletResponse response)
 			throws Exception {
+		log.info(" authenticate "+ username + password);
 		boolean result = this.getUserManager().login(username, password);
 		if(result) {
 			return "success";

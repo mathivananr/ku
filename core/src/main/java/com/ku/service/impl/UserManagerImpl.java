@@ -190,18 +190,23 @@ public class UserManagerImpl extends GenericManagerImpl<User, Long> implements U
     public boolean login(String username, String password) {
     	try {
     		User user = (User) userDao.loadUserByUsername(username);
-    		if (user.getPassword().equalsIgnoreCase(passwordEncoder.encode(password))) {
+    		log.info(" 1 :::: " + user.getPassword());
+    		log.info(" 2 :::: " + passwordEncoder.encode(password));
+    		log.info("aaaaaaa " + passwordEncoder.matches(password, user.getPassword()));
+    		if (passwordEncoder.matches(password, user.getPassword())) {
         		// log user in automatically
                 final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        user.getUsername(), password, user.getAuthorities());
+                        user, password, user.getAuthorities());
                 auth.setDetails(user);
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                log.info(" authenticated successfully");
         		return true;
 
     		} else {
     			return false;
     		}
     	} catch (UsernameNotFoundException e) {
+    		e.printStackTrace();
     		return false;
     	}
     }

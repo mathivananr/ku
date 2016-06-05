@@ -129,13 +129,33 @@
 							<i class="fa fa-sort-desc" aria-hidden="true"></i>
 							<p>Account</p>
 						</a>
-                        <ul class="dropdown-menu">
+                        <ul class="dropdown-menu" id="account-menus">
 							<security:authentication var="user" property="principal" />
 							<c:choose>
 								<c:when test="${user != null && user != 'anonymousUser'}">
 									<li>
-										<div class="text-center">
+										<div class="">
 											<span>Welcome <b>${user.username}</b></span>
+										</div>
+									</li>
+									<li>
+										<div class="">
+											<a href="/user/add-coupon" >Add Coupon</a>
+										</div>
+									</li>
+									<li>
+										<div class="">
+											<a href="/user/coupon-list" >Coupons</a>
+										</div>
+									</li>
+									<li>
+										<div class="">
+											<a href="/user/createPage" >Create Page</a>
+										</div>
+									</li>
+									<li>
+										<div class="">
+											<a href="/shopping/${pageName}" >View Page</a>
 										</div>
 									</li>
 									<li>
@@ -176,7 +196,7 @@
               <div class="row">
                   <div class="col-xs-6">
                       <div class="well">
-                          <form id="loginForm" novalidate="novalidate">
+                          <form id="loginForm" novalidate="novalidate" method="post" action="<c:url value='/j_security_check'/>">
                               <div class="form-group">
                                   <label for="username" class="control-label">Username</label>
                                   <input type="text" class="form-control" id="j_username" name="j_username" value="" required="" title="Please enter you username" placeholder="example@gmail.com">
@@ -188,7 +208,7 @@
                                   <span class="help-block"></span>
                               </div>
                               <div id="loginErrorMsg" class="alert alert-error hide">Wrong username og password</div>
-                              <button type="button" onclick="ajaxLogin();" class="btn btn-success btn-block">Login</button>
+                              <button type="submit" class="btn btn-success btn-block">Login</button>
                           </form>
                       </div>
                   </div>
@@ -233,12 +253,12 @@
 				<div id="side-menu" class="side-menu hide">
 			        <ul class='level1'>
 			            <li class='parent-menu'> 
-			            	<a class='' href='#' title='Dashboard'>
-					            <span class='glyphicon glyphicon-home collapsed-element'></span>
-					            <span class='expanded-element'>Dashboard</span>
+			            	<a class='' href='/offers' title='Offers'>
+					            <!-- <span class='glyphicon glyphicon-home collapsed-element'></span> -->
+					            <span class='expanded-element'>Offers</span>
 					        </a>
 			
-			                <ul class='sub-menu' style="display:none;">
+			               <!--  <ul class='sub-menu' style="display:none;">
 			                    <li> <a href='#' title='Traffic'>Traffic</a>
 			
 			                    </li>
@@ -248,27 +268,27 @@
 			                    <li> <a href='#' title='Purchases'>Purchases</a>
 			
 			                    </li>
-			                </ul>
+			                </ul> -->
 			            </li>
-			            <li> <a class='expandable' href='#' title='APIs'>
-			            <span class='glyphicon glyphicon-wrench collapsed-element'></span>
-			            <span class='expanded-element'>APIs</span>
-			          </a>
+			            <li> 
+			            	<a class='expandable' href='/chat' title='Chat'>
+			            		<span class='expanded-element'>Chat</span>
+			          		</a>
 			
 			            </li>
-			            <li> <a class='expandable' href='#' title='Settings'>
-			            <span class='glyphicon glyphicon-cog collapsed-element'></span>
-			            <span class='expanded-element'>Settings</span>
-			          </a>
+			            <li> 
+			            	<a class='expandable' href='/electronics' title='Electronics'>
+					            <span class='expanded-element'>Electronics</span>
+					        </a>
 			
 			            </li>
-			            <li> <a class='expandable' href='#' title='Account'>
-			            <span class='glyphicon glyphicon-user collapsed-element'></span>
-			            <span class='expanded-element'>Account</span>
-			          </a>
-			            </li>
+			            <li> 
+			            	<a class='expandable' href='/mobiles' title='Mobiles'>
+			            		<span class='expanded-element'>Mobiles</span>
+			          		</a>
+			           </li>
 			        </ul> 
-			        <a href='#' id='logout-icon' title='Logout'>
+			        <a href='/logout' id='logout-icon' title='Logout'>
 	        			<span class='glyphicon glyphicon-off'></span>
 	      			</a>
       			</div>

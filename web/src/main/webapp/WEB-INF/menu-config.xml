@@ -17,12 +17,16 @@
             <Item name="MerchantType" title="MerchantType" page="/admin/merchantType"/>
             <Item name="Merchants" title="Merchants" page="/admin/merchants"/>
             <Item name="Merchant" title="Merchant" page="/admin/merchant"/>
-            <Item name="Operators" title="Operators" page="/admin/networkOperators"/>
+            <Item name="Coupon" title="Coupon" page="user/add-coupon"/>
+            <Item name="Coupons" title="Coupons" page="/user/coupon-list"/>
+            <Item name="Label" title="Label" page="/user/add-label"/>
+            <Item name="Labels" title="Labels" page="/user/label-list"/>
+            <!-- <Item name="Operators" title="Operators" page="/admin/networkOperators"/>
             <Item name="Operator" title="Operator" page="/admin/networkOperator"/>
             <Item name="ErrorCodes" title="Error Codes" page="/admin/rcErrorCodes"/>
             <Item name="ErrorCode" title="Error Code" page="/admin/rcErrorCode"/>
             <Item name="Recharges" title="Recharges" page="/admin/recharges?fromMenu=true"/>
-            <Item name="Support Requests" title="Support Requests" page="/admin/supportRequests"/>
+            <Item name="Support Requests" title="Support Requests" page="/admin/supportRequests"/> -->
         </Menu>
         <Menu name="Logout" title="user.logout" page="/logout" roles="ROLE_ADMIN,ROLE_USER"/>
     </Menus>
