@@ -25,6 +25,7 @@ import com.ku.model.MerchantType;
 import com.ku.model.Page;
 import com.ku.service.MerchantManager;
 import com.ku.service.PageManager;
+import com.ku.service.ReportManager;
 import com.ku.util.CommonUtil;
 import com.ku.util.StringUtil;
 
@@ -33,6 +34,7 @@ public class PageController extends BaseFormController {
 
 	private PageManager pageManager;
 	private MerchantManager merchantManager;
+	private ReportManager reportManager;
 
 	@Autowired
 	public void setPageManager(PageManager pageManager) {
@@ -42,6 +44,11 @@ public class PageController extends BaseFormController {
 	@Autowired
 	public void setMerchantManager(MerchantManager merchantManager) {
 		this.merchantManager = merchantManager;
+	}
+
+	@Autowired
+	public void setReportManager(ReportManager reportManager) {
+		this.reportManager = reportManager;
 	}
 
 	@ModelAttribute
@@ -118,6 +125,36 @@ public class PageController extends BaseFormController {
 			log.error(e.getMessage(), e);
 			saveError(request, "oops! problem in this page contact page owner");
 		}
+		return new ModelAndView("/ku/page", model.asMap());
+	}
+	
+	@RequestMapping(value = "/gotoMerchant/{merchantId}", method = RequestMethod.GET)
+	public ModelAndView gotoMerchantURL(final HttpServletRequest request,
+			final HttpServletResponse response,
+			@PathVariable("merchantId") String merchantId) throws KUException {
+		Model model = new ExtendedModelMap();
+		try {
+			Page page = new Page();
+			if (page != null) {
+				//model.addAttribute(Constants.MERCHANT_TYPE_LIST, merchantTypes);
+				//model.addAttribute(Constants.PAGE, page);
+				model.addAttribute("url", "http://localhost:2020/offers");
+			} else {
+				saveError(request, "oops! the page not found");
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			saveError(request, "oops! problem in this page merchant, contact page owner");
+		}
+		return new ModelAndView("/redirect", model.asMap());
+	}
+	
+	@RequestMapping(value = "/gotoOffer/{offerId}", method = RequestMethod.GET)
+	public ModelAndView gotoOfferURL(final HttpServletRequest request,
+			final HttpServletResponse response,
+			@PathVariable("offerId") String offerId) throws KUException {
+		Model model = new ExtendedModelMap();
+		
 		return new ModelAndView("/ku/page", model.asMap());
 	}
 }

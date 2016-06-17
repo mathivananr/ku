@@ -18,6 +18,7 @@
 		<mapping class="com.ku.model.OfferLabel" />
 		<mapping class="com.ku.model.AppConfig" />
 		<mapping class="com.ku.model.Page" />
+		<mapping class="com.ku.model.Report" />
 		<mapping class="com.ku.model.AppLog" />
 	</session-factory>
 </hibernate-configuration>

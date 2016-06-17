@@ -88,7 +88,7 @@
         <amp.genericCore>true</amp.genericCore>
         <amp.fullSource>false</amp.fullSource>
         <dao.framework>hibernate</dao.framework>
-        <db.name>ku</db.name>
+        <db.name>ku1</db.name>
         <web.framework>spring</web.framework>
 
         <!-- Framework/Plugin versions -->
