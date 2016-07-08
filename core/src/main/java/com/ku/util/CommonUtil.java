@@ -19,13 +19,22 @@ public final class CommonUtil {
 	
 	public static String getLoggedInUserId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User user = (User)authentication.getPrincipal();
-		return String.valueOf(user.getId());
+		if(authentication.getPrincipal() instanceof String) {
+			return String.valueOf(authentication.getPrincipal());
+		} else {
+			User user = (User)authentication.getPrincipal();
+			return String.valueOf(user.getId());
+		}
+		
 	}
 	
 	public static String getLoggedInUserName() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User user = (User)authentication.getPrincipal();
-		return user.getUsername();
+		if(authentication.getPrincipal() instanceof String) {
+			return String.valueOf(authentication.getPrincipal());
+		} else {
+			User user = (User)authentication.getPrincipal();
+			return user.getUsername();
+		}
 	}
 }

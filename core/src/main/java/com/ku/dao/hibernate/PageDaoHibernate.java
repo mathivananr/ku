@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ku.common.KUException;
 import com.ku.dao.PageDao;
 import com.ku.model.Page;
+import com.ku.model.User;
 
 @Repository
 public class PageDaoHibernate extends GenericDaoHibernate<Page, Long> implements
@@ -86,4 +87,20 @@ public class PageDaoHibernate extends GenericDaoHibernate<Page, Long> implements
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws KUException
+	 */
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public User getOwnerByPageId(String pageId) throws KUException {
+		List<Page> pages = getSession().createCriteria(Page.class)
+				.add(Restrictions.eq("pageId", Long.parseLong(pageId))).list();
+		if (pages != null && pages.size() > 0) {
+			return pages.get(0).getOwner();
+		} else {
+			return null;
+		}
+	}
 }

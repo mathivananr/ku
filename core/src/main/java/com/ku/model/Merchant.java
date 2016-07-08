@@ -34,6 +34,8 @@ public class Merchant extends BaseObject implements Serializable {
 	private MerchantType merchantType;
 	private String logoPath;
 	private String targetLink;
+	private String affliateSource;
+	private String affliateParams;
 	private boolean topMerchant;
 	private boolean enabled;
 	private String createdBy;
@@ -101,6 +103,24 @@ public class Merchant extends BaseObject implements Serializable {
 
 	public void setTargetLink(String targetLink) {
 		this.targetLink = targetLink;
+	}
+
+	@Column(name = "affliate_source")
+	public String getAffliateSource() {
+		return affliateSource;
+	}
+
+	public void setAffliateSource(String affliateSource) {
+		this.affliateSource = affliateSource;
+	}
+
+	@Column(name = "affliate_params")
+	public String getAffliateParams() {
+		return affliateParams;
+	}
+
+	public void setAffliateParams(String affliateParams) {
+		this.affliateParams = affliateParams;
 	}
 
 	@Column(name = "is_top_merchant")

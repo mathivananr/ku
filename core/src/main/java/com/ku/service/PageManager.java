@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ku.common.KUException;
 import com.ku.model.Page;
+import com.ku.model.User;
 
 public interface PageManager extends GenericManager<Page, Long> {
 
@@ -17,4 +18,7 @@ public interface PageManager extends GenericManager<Page, Long> {
 	
 	Page getMyPage() throws KUException;
 	
+	String getMerchantURL(String pageId, String merchantId) throws KUException;
+	
+	User getOwnerByPageId(String pageId) throws KUException;
 }

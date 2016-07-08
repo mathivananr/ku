@@ -25,9 +25,11 @@ public class Report extends BaseObject implements Serializable {
 	private Long reportId;
 	private String merchantId;
 	private String merchantName;
+	private String targetLink;
 	private String offerId;
 	private Double payout;
 	private String conversionIp;
+	private String username;
 	private String status;
 	private Calendar createdOn;
 	private Calendar updatedOn;
@@ -66,6 +68,24 @@ public class Report extends BaseObject implements Serializable {
 
 	public void setMerchantName(String merchantName) {
 		this.merchantName = merchantName;
+	}
+
+	@Column(name = "target_link")
+	public String getTargetLink() {
+		return targetLink;
+	}
+
+	public void setTargetLink(String targetLink) {
+		this.targetLink = targetLink;
+	}
+
+	@Column(name = "username")
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	@Column(name = "offer_id")

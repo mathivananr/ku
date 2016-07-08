@@ -128,30 +128,26 @@ public class PageController extends BaseFormController {
 		return new ModelAndView("/ku/page", model.asMap());
 	}
 	
-	@RequestMapping(value = "/gotoMerchant/{merchantId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/gotoMerchant/{pageId}/{merchantId}", method = RequestMethod.GET)
 	public ModelAndView gotoMerchantURL(final HttpServletRequest request,
 			final HttpServletResponse response,
+			@PathVariable("pageId") String pageId,
 			@PathVariable("merchantId") String merchantId) throws KUException {
-		Model model = new ExtendedModelMap();
+		String url = "/";
 		try {
-			Page page = new Page();
-			if (page != null) {
-				//model.addAttribute(Constants.MERCHANT_TYPE_LIST, merchantTypes);
-				//model.addAttribute(Constants.PAGE, page);
-				model.addAttribute("url", "http://localhost:2020/offers");
-			} else {
-				saveError(request, "oops! the page not found");
-			}
+			url = pageManager.getMerchantURL(pageId, merchantId);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
-			saveError(request, "oops! problem in this page merchant, contact page owner");
+			saveError(request,
+					"oops! problem in this page merchant, contact page owner");
 		}
-		return new ModelAndView("/redirect", model.asMap());
+		return new ModelAndView("redirect:" + url);
 	}
 	
-	@RequestMapping(value = "/gotoOffer/{offerId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/gotoOffer/{pageId}/{offerId}", method = RequestMethod.GET)
 	public ModelAndView gotoOfferURL(final HttpServletRequest request,
 			final HttpServletResponse response,
+			@PathVariable("pageId") String pageId,
 			@PathVariable("offerId") String offerId) throws KUException {
 		Model model = new ExtendedModelMap();
 		
