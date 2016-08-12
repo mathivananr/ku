@@ -155,6 +155,11 @@
 									</li>
 									<li>
 										<div class="">
+											<a href="/user/report" >Report</a>
+										</div>
+									</li>
+									<li>
+										<div class="">
 											<a href="/shopping/${pageName}" >View Page</a>
 										</div>
 									</li>

@@ -29,12 +29,19 @@ import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
+import org.jsoup.safety.Whitelist;
+import org.jsoup.select.Elements;
 
 import com.ku.Constants;
 import com.ku.common.KUException;
@@ -81,7 +88,10 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			} else if(!StringUtil.isEmptyString(offerMap.get("Payoom Exclusive Offer"))){
 				offer.setOfferTitle(offerMap.get("Payoom Exclusive Offer"));
 				offerMap.remove("Payoom Exclusive Offer");
-			}else {
+			} else if (!StringUtil.isEmptyString(offerMap.get("Offers"))) {
+				offer.setOfferTitle(offerMap.get("Offers"));
+				offerMap.remove("Offers");
+			} else {
 				offer.setOfferTitle(offerMap.get("offer"));
 				offerMap.remove("offer");
 			}
@@ -327,6 +337,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 			  System.out.println("message count ---------"+messages.length);
 			  for (int i = 0; i < messages.length; i++) {
 					Message message = messages[i];
+					System.out.println("content type "+message.getContentType());
 					System.out.println("subject :: "+message.getSubject());
 					if(message.getSubject().contains("Offer Updates") || message.getSubject().contains("Offer updates") || message.getSubject().contains("offer updates") || message.getSubject().contains("offer Updates")) {
 						if (message.getContentType().contains("multipart")) {
@@ -341,6 +352,48 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 									continue;
 								}
 							}
+						} else if(message.getContentType().contains("TEXT/HTML; charset=utf-8")) {
+							/*System.out.println((String)message.getContent());*/
+							//String plaintext = br2nl((String)message.getContent());
+							String content = (String)message.getContent();
+							StringBuffer plaintext = new StringBuffer();
+							Scanner scanner = new Scanner(content);
+							while (scanner.hasNextLine()) {
+								String line = scanner.nextLine();
+								if (line.trim().equalsIgnoreCase("<html>")
+										|| line.trim().equalsIgnoreCase("<head>")
+										|| line.trim().equalsIgnoreCase("<body>")
+										|| line.trim().equalsIgnoreCase("<title>")
+										|| line.trim().equalsIgnoreCase("<div>")
+										|| line.trim().equalsIgnoreCase("</title>")
+										|| line.trim().equalsIgnoreCase("</head>")
+										|| line.trim().equalsIgnoreCase("</body>")
+										|| line.trim().equalsIgnoreCase("</html>")) {
+	
+								} else {
+									plaintext.append("\n" + line);
+								}
+							}
+	
+							String text = plaintext.toString()
+									.replaceAll("</div>", "")
+									.replaceAll("<strong>", "")
+									.replaceAll("</strong>", "")
+									.replaceAll("<title>", "")
+									.replaceAll("</title>", "");
+							text = text.replaceAll("&nbsp;", "\n");
+							text = text.replaceAll("\n\n", "\n");
+							//plaintext = plaintext.replaceAll("</div>", "");
+							/*if(plaintext.contains("\\n")) {
+								System.out.println("yes contains ++++++++++++++++++++");
+							}*/
+							//plaintext = plaintext.replaceAll("\\n", "");
+							//System.out.println("String content" + text);
+							crawls.add(writePart(text));
+							inbox.setFlags(new Message[] {message}, new Flags(Flags.Flag.SEEN), true);
+						} else {
+							System.out.println("subject :: "+message.getSubject() +"but content type "+message.getContentType());
+							inbox.setFlags(new Message[] {message}, new Flags(Flags.Flag.SEEN), true);
 						}
 					} else {
 						inbox.setFlags(new Message[] {message}, new Flags(Flags.Flag.SEEN), true);
@@ -392,49 +445,86 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 		return crawls;
 	}
 
+	public String br2nl(String html) {
+	    if(html==null)
+	        return html;
+	    Document document = Jsoup.parse(html);
+	    document.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
+	    /*document.select("br").append("\\n");*/
+	    /*document.select("p").prepend("\\n\\n");*/
+	    //String s = document.html().replaceAll("&nbsp;\n", "\\n").replaceAll("\n", "").replaceAll("\\\\n", "\n");
+	    return Jsoup.clean(document.html(), "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+	}
+	
+	public static String extractText(String html) throws IOException {
+		StringBuffer sb = new StringBuffer(); 
+	    Document document = Jsoup.parse(html, null);
+	    Elements body = document.getAllElements();
+	    for (Element e : body) {
+	        for (TextNode t : e.textNodes()) {
+	            String s = t.text();
+	            if (StringUtils.isNotBlank(s))
+	                sb.append(t.text()).append(" ");
+	        }
+	    }
+	    return sb.toString();
+	}
+	
 	/*
 	 * This method checks for content-type based on which, it processes and
 	 * fetches the content of the message
 	 */
 	public Crawl<String> writePart(Part p) throws KUException {
-		Crawl<String> dll = new Crawl<String>();
 		try {
 			if (p.isMimeType("text/plain")) {
-				Scanner scanner = new Scanner((String) p.getContent());
-				while (scanner.hasNextLine()) {
-					String line = scanner.nextLine();
-					try {
-						if (line.contains(":") && line.split(":").length < 2) {
-							if (scanner.hasNextLine()) {
-								String nextLine = scanner.nextLine();
-								if (!nextLine.trim().isEmpty()) {
-									line = line.concat(nextLine);
-								}
-							}
-						}
-
-						if(StringUtil.isEmptyString(line) && dll.getTail() != null &&(dll.getTail().getElement().contains("Offer*:")
-								|| dll.getTail().getElement().contains("Offer* :")
-								|| dll.getTail().getElement().contains("Offer:")
-								|| dll.getTail().getElement().contains("Offer :"))){
-							continue;
-						} else {
-							dll.addLast(line);
-						}
-					} catch (NoSuchElementException e) {
-						continue;
-					}
-				}
-				scanner.close();
+				return writePart((String) p.getContent());
+			} else {
+				return (new Crawl<String>());
 			}
 		} catch (MessagingException | IOException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 			throw new KUException("oops problem in crawl email");
 		}
-		return dll;
 	}
 
+	public Crawl<String> writePart(String content) throws KUException {
+		Crawl<String> dll = new Crawl<String>();
+		Scanner scanner = new Scanner(content);
+		while (scanner.hasNextLine()) {
+			String line = scanner.nextLine();
+			System.out.println(line);
+			try {
+				if (line.contains(":") && line.split(":").length < 2) {
+					if (scanner.hasNextLine()) {
+						String nextLine = scanner.nextLine();
+						if (!nextLine.trim().isEmpty()) {
+							line = line.concat(nextLine);
+						}
+					}
+				}
+
+				if (StringUtil.isEmptyString(line)
+						&& dll.getTail() != null
+						&& (dll.getTail().getElement().contains("Offer*:")
+								|| dll.getTail().getElement()
+										.contains("Offer* :")
+								|| dll.getTail().getElement()
+										.contains("Offer:") 
+								|| dll.getTail().getElement().contains("Offers:") 
+								|| dll.getTail().getElement().contains("Offer :"))) {
+					continue;
+				} else {
+					dll.addLast(line);
+				}
+			} catch (NoSuchElementException e) {
+				continue;
+			}
+		}
+		scanner.close();
+		return dll;
+	}
+	
 	public List<Map<String, String>> getOffers() {
 		List<Map<String, String>> offers = new ArrayList<Map<String, String>>();
 		for (Crawl<String> crawl : readEmail()) {
@@ -496,7 +586,7 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 					}
 	
 					if (elementArray[1].contains("|")) {
-						String[] valueArray = elementArray[1].split("|");
+						String[] valueArray = elementArray[1].split("\\|");
 						value = valueArray[0];
 						for (int i = 1; i < valueArray.length; i++) {
 							if (offer.get("note") != null) {
@@ -547,10 +637,12 @@ public class EmailOfferProcessorImpl implements EmailOfferProcessor {
 	}
 
 	public static boolean checkIsOffers(Node<String> node) {
-		if (node.getNext().getElement().contains("Offer*:")
+		if (node.getNext() != null && node.getNext().getElement() != null &&
+				(node.getNext().getElement().contains("Offer*:")
 				|| node.getNext().getElement().contains("Offer* :")
 				|| node.getNext().getElement().contains("Offer:")
-				|| node.getNext().getElement().contains("Offer :")) {
+				|| node.getNext().getElement().contains("Offers:")
+				|| node.getNext().getElement().contains("Offer :"))) {
 			return true;
 		} else {
 			return false;

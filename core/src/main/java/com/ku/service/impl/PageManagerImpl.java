@@ -73,7 +73,7 @@ public class PageManagerImpl extends GenericManagerImpl<Page, Long> implements
 		report.setUpdatedOn(new GregorianCalendar());
 		report.setUsername(CommonUtil.getLoggedInUserName());
 		report.setStatus(Constants.REFER);
-		report.setConversionIp("");
+		report.setConversionIp(CommonUtil.getUserIP());
 		report.setOwner(getOwnerByPageId(pageId));
 		reportManager.saveReport(report);
 		return targetLink;
