@@ -59,12 +59,13 @@ public class ReportDaoHibernate extends GenericDaoHibernate<Report, Long>
 	 */
 	@SuppressWarnings("unchecked")
 	@Transactional
-	public Report getReportByOwnerId(String ownerId) throws KUException {
+	public List<Report> getReportByOwnerId(String ownerId) throws KUException {
+		log.info(ownerId);
 		List<Report> reports = getSession().createCriteria(Report.class)
 				.add(Restrictions.eq("owner.id", Long.parseLong(ownerId)))
 				.list();
 		if (reports != null && reports.size() > 0) {
-			return reports.get(0);
+			return reports;
 		} else {
 			return null;
 		}

@@ -134,46 +134,38 @@
 							<c:choose>
 								<c:when test="${user != null && user != 'anonymousUser'}">
 									<li>
-										<div class="">
 											<span>Welcome <b>${user.username}</b></span>
-										</div>
 									</li>
+									<li class="divider"></li>
 									<li>
-										<div class="">
 											<a href="/user/add-coupon" >Add Coupon</a>
-										</div>
 									</li>
+									<li class="divider"></li>
 									<li>
-										<div class="">
 											<a href="/user/coupon-list" >Coupons</a>
-										</div>
 									</li>
+									<li class="divider"></li>
 									<li>
-										<div class="">
 											<a href="/user/createPage" >Create Page</a>
-										</div>
 									</li>
+									<li class="divider"></li>
 									<li>
-										<div class="">
 											<a href="/user/report" >Report</a>
-										</div>
 									</li>
+									<li class="divider"></li>
 									<li>
-										<div class="">
 											<a href="/shopping/${pageName}" >View Page</a>
-										</div>
 									</li>
+									<li class="divider"></li>
 									<li>
-										<div class="text-center">
 											<a class="btn btn-default" href="/logout">Logout</a>
-										</div>
 									</li>
 								</c:when>
 								<c:otherwise>
 									<li>
 										<div class="text-center">
-											<a id="login-link" class="btn btn-default" data-toggle="modal"
-												data-target="#myModal" href="#myModal">Login</a>
+											<div id="login-link" class="btn btn-default" data-toggle="modal"
+												data-target="#myModal" href="#myModal">Login</div>
 										</div>
 									</li>
 									<li><div class="account-signup">

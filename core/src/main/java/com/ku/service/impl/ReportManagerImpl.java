@@ -36,7 +36,7 @@ public class ReportManagerImpl extends GenericManagerImpl<Report, Long>
 		return reportDao.getReportById(reportId);
 	}
 
-	public Report getMyReport() throws KUException {
+	public List<Report> getMyReport() throws KUException {
 		return reportDao.getReportByOwnerId(CommonUtil.getLoggedInUserId());
 	}
 }

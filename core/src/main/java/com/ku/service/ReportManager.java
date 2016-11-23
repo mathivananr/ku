@@ -13,6 +13,6 @@ public interface ReportManager extends GenericManager<Report, Long> {
 
 		Report getReportById(Long reportId) throws KUException;
 
-		Report getMyReport() throws KUException;
+		List<Report> getMyReport() throws KUException;
 
 }

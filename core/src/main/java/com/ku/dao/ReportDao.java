@@ -14,5 +14,5 @@ public interface ReportDao extends GenericDao<Report, Long> {
 	Report getReportById(Long reportId) throws KUException;
 
 	
-	Report getReportByOwnerId(String userId) throws KUException;
+	List<Report> getReportByOwnerId(String userId) throws KUException;
 }
